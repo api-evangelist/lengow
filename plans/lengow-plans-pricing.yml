@@ -1,0 +1,49 @@
+generated: '2026-08-17'
+method: searched
+source: https://www.lengow.com/pricing/
+plan_count: 3
+currency: null
+billing_period: null
+note: >-
+  Lengow publishes three named tiers but no prices: every tier is quote-only ("Contact us"). Pricing is
+  modular — a platform/services core plus unit-based add-ons per module (NetMarkets sales channels,
+  NetAmplify advertising feeds, NetRivals / NetMonitor sites monitored), with better per-unit rates at
+  higher tiers. No currency, billing period, API call quota or included API volume is published, and API
+  access is not priced separately on this page. No free trial is advertised; the conversion path is a
+  demo request.
+public_prices: false
+api_metered: false
+plans:
+- name: Essential
+  price: null
+  price_model: quote
+  currency: null
+  billing_period: null
+  positioning: first steps in multichannel growth across key markets
+  included:
+  - Standard services and platform access (Starter capacity)
+  - Standard support with a pooled Customer Success Manager
+  - Onboarding/setup training
+  modules: unit-based pricing for NetMarkets, NetAmplify, NetRivals, NetMonitor
+- name: Pro
+  price: null
+  price_model: quote
+  currency: null
+  billing_period: null
+  positioning: ambitious brands and retailers accelerating in multiple markets
+  included:
+  - Upgraded services and platform access (Expanded capacity)
+  - Standard support with a dedicated Customer Success Manager
+  - Enhanced setup plus custom training sessions on demand
+  modules: unit-based pricing at better per-unit rates than Essential
+- name: Scale
+  price: null
+  price_model: quote
+  currency: null
+  billing_period: null
+  positioning: enterprise leaders driving global omnichannel success
+  included:
+  - Top-tier services and platform access (Enterprise capacity)
+  - Premium support and a dedicated CSM with high-touch service and quarterly reviews
+  - Priority setup and tailored training services
+  modules: best per-unit rates; advanced add-ons included

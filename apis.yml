@@ -1,24 +1,150 @@
 aid: lengow
 name: Lengow
-description: 'Lengow is a company surfaced as a portfolio company of serena and added to the API Evangelist
-  network as a stub for enrichment. Sector: saas. This profile is a lead awaiting the enrichment pipeline.'
+description: >-
+  Lengow is a French e-commerce automation platform (Nantes, founded 2009; part of the Lengow group alongside
+  Netrivals and NetMonitor) that connects merchant product catalogues to marketplaces, price-comparison sites and
+  advertising channels across Europe. Its Channel Execution suite covers NetMarkets for marketplace management and
+  NetAmplify for advertising feed management, plus NetRivals price intelligence and NetMonitor reseller monitoring.
+  Lengow publishes a public REST API at api.lengow.io covering order retrieval and order actions (accept, refuse,
+  ship, cancel, refund) across marketplaces, marketplace metadata, invoice and delivery documents, Zalando ZFS
+  warehouse communication, product integration reports, and a beta v1.0 catalogue API for products and attributes.
+  Authentication is a session token exchanged from an account access_token + secret pair. First-party e-commerce
+  plugins are published on GitHub for PrestaShop, Magento 2, WooCommerce, Shopware 6 and Salesforce Commerce Cloud.
 url: https://raw.githubusercontent.com/api-evangelist/lengow/refs/heads/main/apis.yml
+image: https://www.lengow.com/wp-content/uploads/2024/12/Lengow_Homepage_Loop.png
 x-type: company
 x-source: serena-portfolio
-x-tier: stub
-x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-08-17'
 modified: '2026-08-17'
 tags:
 - Company
-- Saas
-apis: []
+- SaaS
+- E-Commerce
+- Marketplaces
+- Product Feeds
+- Retail
+- Advertising
+- Order Management
+- Price Intelligence
+- France
+apis:
+- name: Lengow Channel Execution API
+  description: >-
+    REST API for Lengow Channel Execution (NetMarkets marketplace management and NetAmplify ads feed management).
+    Covers session-token authentication, per-route rate-limit introspection, marketplace product integration
+    reports, and the beta v1.0 Catalogues API for listing, reading, creating, updating and deleting products and
+    attributes. Orders, order actions, marketplace metadata and documents are documented in prose at docs.lengow.io
+    on the same api.lengow.io host but are not part of the published OpenAPI.
+  humanURL: https://api.lengow.io/docs/
+  baseURL: https://api.lengow.io
+  tags:
+  - e-commerce
+  - marketplaces
+  - orders
+  - product-catalog
+  - feeds
+  properties:
+  - type: OpenAPI
+    url: openapi/lengow-channel-execution-openapi.yml
+  - type: Documentation
+    url: https://api.lengow.io/docs/
+  - type: APIReference
+    url: https://docs.lengow.io/
+  - type: GettingStarted
+    url: https://help.lengow.com/hc/en-us/articles/360011980072-Getting-started-on-the-Lengow-API
+  - type: Authentication
+    url: authentication/lengow-authentication.yml
+  - type: RateLimits
+    url: rate-limits/lengow-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/lengow-problem-types.yml
+  - type: Conventions
+    url: conventions/lengow-conventions.yml
+  - type: DataModel
+    url: data-model/lengow-data-model.yml
+  - type: Overlay
+    url: overlays/lengow-channel-execution-overlay.yaml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/lengow-agentic-access.yml
+- type: VulnerabilityDisclosure
+  url: security/lengow-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/lengow-domain-security.yml
 - type: Website
-  url: http://www.lengow.fr/
+  url: https://www.lengow.com/
+- type: DeveloperPortal
+  url: https://docs.lengow.io/
+- type: Documentation
+  url: https://api.lengow.io/docs/
+- type: APIReference
+  url: https://docs.lengow.io/
+- type: GettingStarted
+  url: https://help.lengow.com/hc/en-us/articles/360011980072-Getting-started-on-the-Lengow-API
+- type: Support
+  url: https://help.lengow.com/hc/en-us
+- type: HelpCenter
+  url: https://help.lengow.com/hc/en-us
+- type: Blog
+  url: https://blog.lengow.com/
+- type: GitHubOrganization
+  url: https://github.com/lengow
+- type: Pricing
+  url: https://www.lengow.com/pricing/
+- type: SignUp
+  url: https://my.lengow.io/
+- type: Login
+  url: https://my.lengow.io/
+- type: TermsOfService
+  url: https://www.lengow.com/terms/
+- type: PrivacyPolicy
+  url: https://www.lengow.com/privacy-policy/
+- type: ChangeLog
+  url: https://docs.lengow.io/#api-release-notes
+- type: Packages
+  url: packages/lengow-packages.yml
+- type: SDKs
+  url: packages/lengow-packages.yml
+- type: WellKnown
+  url: well-known/lengow-well-known.yml
+- type: SecurityTxt
+  url: well-known/lengow-security.txt
+- type: LLMsTxt
+  url: llms/lengow-llms.txt
+- type: Authentication
+  url: authentication/lengow-authentication.yml
+- type: Conventions
+  url: conventions/lengow-conventions.yml
+- type: ErrorCatalog
+  url: errors/lengow-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/lengow-lifecycle.yml
+- type: ChangeLog
+  url: changelog/lengow-changelog.yml
+- type: Conformance
+  url: conformance/lengow-conformance.yml
+- type: DataModel
+  url: data-model/lengow-data-model.yml
+- type: Plans
+  url: plans/lengow-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/lengow-rate-limits.yml
+- type: Overlay
+  url: overlays/lengow-channel-execution-overlay.yaml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Security
+  url: https://api.lengow.io/.well-known/security.txt
+- type: Compliance
+  url: https://www.lengow.com/gdpr/
+x-enrichment:
+  date: '2026-08-17'
+  status: enriched
+  artifacts_added: 24
+  pass: local-v1

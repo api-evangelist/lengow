@@ -1,0 +1,80 @@
+generated: '2026-08-17'
+method: probed
+source: live GET probes of every Lengow host in apis.yml + the OpenAPI base host
+note: >-
+  Two hosts serve a real RFC 9116 security.txt (api.lengow.io and the canonical my.lengow.io). Every other
+  /.well-known/ path 404s on every host. Note the served security.txt carries an Expires value of
+  2023-09-08, so the document is present but stale by RFC 9116's own freshness rule. www.lengow.com and
+  my.lengow.io answer /.well-known/* misses with an HTML 404 page (not a soft-200), so nothing was
+  mistaken for a document.
+hosts:
+- host: https://api.lengow.io
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/plain
+    file: lengow-security.txt
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /llms.txt
+    status: 404
+- host: https://my.lengow.io
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/plain
+    note: canonical location declared by the security.txt itself; byte-identical to the api.lengow.io copy
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /llms.txt
+    status: 404
+- host: https://www.lengow.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /llms.txt
+    status: 200
+    content_type: text/plain
+    file: ../llms/lengow-llms.txt
+- host: https://docs.lengow.io
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /llms.txt
+    status: 404

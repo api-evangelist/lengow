@@ -1,0 +1,68 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  https://docs.lengow.io/ (Getting started + API Release Notes), https://api.lengow.io/docs/ (published
+  OpenAPI), and live probes of candidate status-page hosts
+versioning:
+  scheme: uri-path
+  current: v3.0
+  concurrent:
+  - v3.0 — orders, marketplaces, documents, product reports
+  - v1.0 — catalogues API, marked [BETA] in every operation summary
+  unversioned:
+  - /access/get_token
+  - /me
+  - /rate-limits
+  docs: https://docs.lengow.io/#getting-started
+  note: >-
+    v1.0 is NEWER than v3.0 — the number is a per-service version, not a platform version. Every
+    catalogue operation is labelled [BETA] in the published spec, so the newest surface is explicitly
+    pre-stable.
+beta_surface:
+  api: Catalogues (v1.0)
+  operations: 10
+  marker: '[BETA] prefix on every operation summary in the published OpenAPI'
+  stability_commitment: none published
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  deprecated_operations: []
+  note: >-
+    No deprecation policy, no notice period and no RFC 8594 Sunset/Deprecation header support is
+    published, and the OpenAPI marks no operation `deprecated`. What Lengow does publish is a
+    deprecation COMMUNICATION channel: the API Release Notes define "Deprecation" and "Removal" as
+    change categories and have carried a real removal in the past (category_name, 2017-12-18). That is a
+    notification habit, not a policy, so no Deprecation pointer is emitted in apis.yml.
+  evidence:
+  - url: https://docs.lengow.io/#api-release-notes
+    finding: 'Deprecation and Removal are declared change categories; no timeline or notice-period commitment'
+  - source: openapi/lengow-channel-execution-openapi.yml
+    finding: 0 occurrences of "deprecated", "sunset"
+status_page:
+  url: null
+  note: >-
+    No status page found. status.lengow.com does not resolve (NXDOMAIN), status.lengow.io times out, and
+    https://lengow.statuspage.io/ answers 302 to https://www.statuspage.io/ — an unclaimed Statuspage
+    subdomain, not an operating status page. No StatusPage pointer is emitted.
+  evidence:
+  - url: https://status.lengow.com/
+    status: 0
+    finding: DNS NXDOMAIN
+  - url: https://status.lengow.io/
+    status: 0
+    finding: connection timed out
+  - url: https://lengow.statuspage.io/
+    status: 302
+    finding: redirects off-host to https://www.statuspage.io/
+sla:
+  url: null
+  uptime_target: null
+  note: no public SLA or uptime commitment; service terms are quote-based per contract tier
+changelog: changelog/lengow-changelog.yml
+support:
+  help_center: https://help.lengow.com/hc/en-us
+  contact: support@lengow.com
+  note: the OpenAPI info.contact names Support, support@lengow.com, http://help.lengow.com
+data_freshness:
+  orders: Lengow retrieves orders from marketplaces every 15 minutes (published in the order workflow)

@@ -1,0 +1,38 @@
+generated: '2026-08-17'
+method: generated
+source: >-
+  openapi/lengow-channel-execution-openapi.yml (every operationId below is verbatim from the published
+  spec) plus the conventions, error and rate-limit artifacts in this repo
+note: >-
+  Lengow publishes no AGENTS.md or provider-authored skills; these are API Evangelist packaged operating
+  instructions. They are grounded ONLY in the operations that exist in the published OpenAPI. The v3.0
+  orders surface (accept / refuse / ship / cancel / refund) is deliberately not covered by a skill,
+  because it has no machine-readable contract to ground operationIds in.
+skills:
+- file: lengow-authenticate-and-check-limits.md
+  name: Authenticate against the Lengow API and check your rate budget
+  api: openapi/lengow-channel-execution-openapi.yml
+  operations:
+  - Get Authentication Token
+  - Get Current Session
+  - Get Rate Limits
+- file: lengow-sync-catalogue-products.md
+  name: Sync products into a Lengow catalogue
+  api: openapi/lengow-channel-execution-openapi.yml
+  operations:
+  - list_catalogues_public_catalogues_get
+  - get_catalogue_public_catalogues__catalogue_id__get
+  - list_attributes_public_catalogues__catalogue_id__attributes_get
+  - list_products_public_catalogues__catalogue_id__products_get
+  - get_product_public_catalogues__catalogue_id__products__product_id_value__get
+  - upsert_products_public_catalogues__catalogue_id__products_post
+  - update_products_public_catalogues__catalogue_id__products_patch
+  - update_product_public_catalogues__catalogue_id__products__product_id_value__patch
+  - delete_products_public_catalogues__catalogue_id__products_delete
+  - delete_product_public_catalogues__catalogue_id__products__product_id_value__delete
+- file: lengow-pull-feed-integration-report.md
+  name: Pull a Lengow feed integration report and triage product errors
+  api: openapi/lengow-channel-execution-openapi.yml
+  operations:
+  - Get product reports
+  - Get Rate Limits

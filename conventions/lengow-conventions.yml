@@ -1,0 +1,108 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  https://docs.lengow.io/ (Getting started, Make a request, Orders) and
+  https://api.lengow.io/docs/ (the published OpenAPI 3.0.3), plus derivation from
+  openapi/lengow-channel-execution-openapi.yml
+note: >-
+  Cross-cutting request/response semantics for the Lengow API. The most consequential finding for an
+  agent is the ABSENCE of an idempotency contract: order actions (accept, refuse, ship, cancel, refund)
+  are state-changing calls against a marketplace with no idempotency key, no request-id echo and no
+  documented replay-safety rule, so no Idempotency pointer is emitted for this provider.
+authentication:
+  style: bearer session token in an Authorization header, exchanged from access_token + secret
+  detail: authentication/lengow-authentication.yml
+base_url: https://api.lengow.io
+versioning:
+  style: uri-path
+  versions:
+  - v3.0
+  - v1.0
+  detail: >-
+    Two version prefixes are live at once and they are not a ladder — v3.0 carries orders, marketplaces,
+    documents and reports, while the newer beta Catalogues API is served under v1.0. Unversioned utility
+    routes (/access/get_token, /me, /rate-limits) sit at the host root.
+  version_negotiation: none (no Accept-version header, no date-pinned versions)
+content_types:
+  request: application/json (POST /access/get_token accepts form/body params); multipart/form-data for document upload
+  response: application/json; text/csv for GET /v1.0/report/export
+pagination:
+  styles:
+  - style: page-number
+    surface: v3.0 orders
+    params: [page, page_size]
+    max_page_size: 100
+  - style: page-number
+    surface: v1.0 catalogues, attributes and products
+    params: [page, limit]
+    response_shape: PaginatedResultWithNext (carries a next pointer)
+  cursor: false
+ordering:
+  param: ordering
+  syntax: comma-separated field list, '-' prefix for descending (e.g. ordering=marketplace,-updated_at)
+  surface: v3.0 orders
+filtering:
+  surface: v3.0 orders
+  params:
+  - marketplace
+  - marketplace_order_id
+  - lengow_status
+  - lengow_line_status
+  - marketplace_order_date_from
+  - marketplace_order_date_to
+  default_window: >-
+    "ordered during the previous 7 days" is applied when no valid date filter is provided (changed
+    2023-07-25 — previously an invalid filter meant no time bound at all)
+idempotency:
+  supported: false
+  evidence: >-
+    no Idempotency-Key parameter or header anywhere in the OpenAPI (0 occurrences of "idempot"), and the
+    docs describe no replay-safety rule for the five order actions
+  mitigation_documented: >-
+    the docs recommend marking imported orders with the merchant order ID (set merchant order ID
+    endpoint) and re-listing actions to verify they were processed by the marketplace — an
+    at-least-once/reconcile pattern rather than an idempotency contract
+request_tracing:
+  request_id_header: none documented
+  correlation: >-
+    merchant-side correlation is done in the domain, not the transport: the merchant writes its internal
+    order id onto the Lengow order and lists order actions to confirm processing
+error_envelope:
+  shape: '{"error": {"message": "<text>", "code": <int>}}'
+  variant: '{"error": "<text>"} on some legacy routes (e.g. the /docs 404 handler)'
+  validation_shape: 'FastAPI/Pydantic HTTPValidationError {"detail": [ValidationError]} on the v1.0 catalogue routes'
+  rfc9457: false
+  detail: errors/lengow-problem-types.yml
+partial_success:
+  status: 207
+  surface: v1.0 batch product upsert / update / delete
+  shape: per-product result item arrays (UpsertProductsResponseItem, UpdateProductsResponseItem, DeleteProductsResponseItem)
+  note: >-
+    the batch catalogue endpoints do not fail the whole request on a bad item; a client MUST read the
+    per-item results, not the HTTP status
+rate_limiting:
+  model: fixed-window per route per login, introspectable at GET /rate-limits
+  exhaustion: 429 with a Retry-After header
+  detail: rate-limits/lengow-rate-limits.yml
+data_types:
+  country: ISO 3166-2 (two characters) or ISO 3166-1 alpha-3 (three characters), depending on the resource
+  date: ISO 8601 (e.g. 2020-03-16T04:46:00+00:00)
+  currency: ISO 4217 three characters
+  money: decimal or string
+  amount_semantics: >-
+    amount fields are expressed in the merchant account's currency; original_* fields (original_amount,
+    original_total_order, original_currency, ...) carry the marketplace's own currency
+expansion:
+  supported: false
+  note: order details are returned inline with the order; there is no expand/fields/sparse-fieldset parameter
+metadata:
+  supported: partial
+  note: >-
+    orders carry a marketplace-driven meta object (e.g. shipping_deadline for some Mirakl marketplaces)
+    and typed nodes order_types / orderline_types; there is no free-form customer-writable metadata bag
+webhooks:
+  supported: false
+  note: >-
+    no webhook, callback or event surface is documented. Lengow polls marketplaces every 15 minutes and
+    merchants poll Lengow — integration is pull-only
+lifecycle: lifecycle/lengow-lifecycle.yml

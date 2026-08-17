@@ -1,0 +1,38 @@
+generated: '2026-08-17'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.lengow.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Sep  5 02:27:09 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+- host: api.lengow.io
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 17 23:18:25 2026 GMT
+  hsts: null
+domains:
+- domain: lengow.com
+  dnssec: false
+  caa:
+  - 0 issue "digicert.com"
+  - 0 issue "globalsign.com"
+  - 0 issue "letsencrypt.org"
+  - 0 issue "sectigo.com"
+  - 0 issuewild "amazonaws.com"
+  - 0 issue "amazonaws.com"
+  spf: true
+  dmarc: true
+  dmarc_policy: reject
+- domain: lengow.io
+  dnssec: false
+  caa:
+  - 0 issue "comodoca.com"
+  - 0 issue "letsencrypt.org"
+  - 0 issuewild "amazonaws.com"
+  - 0 issuewild "pki.goog"
+  - 0 issue "amazonaws.com"
+  spf: false
+  dmarc: false

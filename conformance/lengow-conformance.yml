@@ -1,0 +1,82 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  https://www.lengow.com/gdpr/, https://api.lengow.io/.well-known/security.txt, and derivation from
+  openapi/lengow-channel-execution-openapi.yml
+note: >-
+  Lengow publishes a GDPR/data-protection page with a named DPO and an EU-only hosting commitment, but
+  claims NO first-party security certification. The ISO 27000 reference on that page is about its
+  hosting providers, not about Lengow — recorded here as provider-attested, not as a Lengow certification.
+standards:
+- id: openapi-3.0
+  conforms: true
+  evidence: >-
+    api.lengow.io/docs/ serves an OpenAPI 3.0.3 document (14 operations) inline in a ReDoc page; note it
+    also carries the Swagger-2 style host/basePath/schemes keys and no servers[] block, so it is a valid
+    3.0.3 document with legacy residue
+- id: rfc9116-security-txt
+  conforms: partial
+  evidence: >-
+    /.well-known/security.txt is served at api.lengow.io and at the canonical my.lengow.io with Contact,
+    Encryption, Preferred-Languages and Canonical fields — but the Expires value is 2023-09-08, so the
+    document is expired under RFC 9116 §2.5.5 and carries no Policy field
+- id: oauth2
+  conforms: false
+  evidence: no oauth2 securityScheme in the spec and no OAuth flow in the docs; auth is a proprietary two-key session-token exchange
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration 404s on every Lengow host
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: 'errors use a vendor envelope {"error": {"message", "code"}} and application/json, not application/problem+json'
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: no Sunset or Deprecation header support documented; no deprecation policy published
+- id: rfc9331-ratelimit-headers
+  conforms: false
+  evidence: only Retry-After is declared on 429; no RateLimit-* or X-RateLimit-* headers on successful responses
+- id: json-api
+  conforms: false
+  evidence: responses are plain vendor JSON, not JSON:API documents
+- id: odata
+  conforms: false
+- id: asyncapi
+  conforms: false
+  evidence: no event, streaming or webhook surface is published
+- id: iso-8601-dates
+  conforms: true
+  evidence: docs state all date/time values are ISO 8601 (e.g. 2020-03-16T04:46:00+00:00)
+- id: iso-4217-currency
+  conforms: true
+  evidence: docs state all currencies are three-character ISO 4217
+- id: iso-3166-country
+  conforms: true
+  evidence: docs state countries are ISO 3166-2 (alpha-2) or ISO 3166-1 alpha-3 depending on the resource
+- id: gdpr
+  conforms: true
+  evidence: >-
+    https://www.lengow.com/gdpr/ states Lengow is GDPR compliant, acts as a data processor with a
+    mandatory data addendum to its Terms of Service, verifies sub-processor compliance, and publishes a
+    DPO contact (DPO@lengow.com)
+- id: eu-data-residency
+  conforms: true
+  evidence: 'https://www.lengow.com/gdpr/: "our data are stored exclusively in Europe by ISO27000 certified providers"'
+- id: iso-27001
+  conforms: false
+  evidence: >-
+    Lengow does not claim its own ISO 27001 certification; the ISO 27000 claim on the GDPR page is about
+    its hosting providers. No certificate, scope statement or audit report is published.
+- id: soc2
+  conforms: false
+  evidence: not claimed anywhere on the public site; no trust centre exists (trust.lengow.com does not resolve)
+- id: pci-dss
+  conforms: false
+  evidence: not claimed; Lengow does not process card payments — marketplaces settle with buyers
+compliance_program:
+  published: true
+  url: https://www.lengow.com/gdpr/
+  dpo: DPO@lengow.com
+  certifications_held_by_lengow: []
+  certifications_attested_of_providers:
+  - ISO 27000 family (hosting providers, unnamed)
+  trust_center: null

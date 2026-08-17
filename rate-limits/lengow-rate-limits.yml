@@ -1,0 +1,52 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  https://api.lengow.io/docs/ (the published OpenAPI 3.0.3 — GET /rate-limits operation and the
+  components.responses.TooManyRequests definition) and https://docs.lengow.io/ (per-endpoint limit notes)
+docs: https://api.lengow.io/docs/
+limit_count: 2
+note: >-
+  Lengow does NOT publish a global numeric quota. It publishes something better for an agent: an
+  authenticated introspection endpoint, GET /rate-limits, that returns every API route available to the
+  calling login together with that route's configured fixed-window quota, the remaining credit, and the
+  seconds left in the window. The only hard number stated in public prose is the 10 req/min cap on the
+  v1.0 report export. The 429 example in the spec ("Request limitation: 500 reached on /v3.0/orders")
+  shows the envelope, not a guaranteed 500/window contract, so it is recorded as an example below rather
+  than as a published limit.
+model: fixed-window, per-route, per-login (Redis bucket)
+introspection:
+  endpoint: GET https://api.lengow.io/rate-limits
+  auth_required: true
+  returns:
+  - route
+  - configured quota for the route
+  - remaining_credit (current Redis bucket value, clamped to zero after exhaustion)
+  - remaining_time (seconds until the fixed window expires)
+  null_semantics: remaining_credit and remaining_time are null when rate limiting is disabled for a route
+limits:
+- scope: per-endpoint
+  endpoint: GET /v1.0/report/export
+  window: 1 minute
+  limit: 10
+  source: https://docs.lengow.io/
+- scope: per-route-per-login
+  endpoint: all routes
+  window: fixed window (length returned per route by GET /rate-limits)
+  limit: configured per route; not published as a static number
+  source: https://api.lengow.io/docs/ (GET /rate-limits)
+exhaustion:
+  status: 429
+  response_headers:
+  - name: Retry-After
+    description: Seconds until the current fixed window expires
+    type: integer
+    minimum: 0
+  body_example: '{"error": {"code": 429, "message": "Request limitation: 500 reached on /v3.0/orders"}}'
+  note: >-
+    Retry-After is the ONLY rate-limit response header the spec declares. No X-RateLimit-* or RFC 9331
+    RateLimit-* headers are documented on successful responses, so a client cannot see remaining budget
+    without an extra call to GET /rate-limits.
+pagination_interaction:
+  note: >-
+    Orders list responses are capped at 100 orders per page (page / page_size), and the v1.0 catalogue
+    endpoints paginate with page / limit — the practical throughput ceiling for a full catalogue sync.

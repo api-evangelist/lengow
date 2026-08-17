@@ -1,0 +1,78 @@
+generated: '2026-08-17'
+method: derived
+source: >-
+  openapi/lengow-channel-execution-openapi.yml (every 4xx/5xx response declared in the published spec),
+  enriched from https://docs.lengow.io/ and from live unauthenticated probes of api.lengow.io
+format: vendor-json
+rfc9457: false
+envelope:
+  primary: '{"error": {"message": "<text>", "code": <int>}}'
+  legacy: '{"error": "<text>"}'
+  validation: '{"detail": [{"loc": [...], "msg": "...", "type": "..."}]}  # FastAPI HTTPValidationError, v1.0 routes'
+note: >-
+  Lengow publishes no error-code registry and no application/problem+json media type. Error meaning is
+  carried by the HTTP status plus a human-readable message; the numeric `code` in the envelope mirrors
+  the HTTP status rather than naming a distinct error condition. The catalogue (v1.0) routes are
+  FastAPI-shaped and emit a different validation envelope from the older v3.0 routes — a real
+  inconsistency an agent must handle.
+problems:
+- status: 400
+  title: Authentication error
+  detail: Invalid access_token / secret pair supplied to the token exchange
+  source_operation: openapi/lengow-channel-execution-openapi.yml#Get Authentication Token
+- status: 400
+  title: Invalid request
+  detail: 'e.g. attempting to update invalid attributes on a product'
+  source_operation: openapi/lengow-channel-execution-openapi.yml#update_product_public_catalogues__catalogue_id__products__product_id_value__patch
+- status: 401
+  title: Missing, invalid, or expired authentication token
+  observed_body: '{"error": {"message": "Missing authentication token", "code": 401}}'
+  observed_at: GET https://api.lengow.io/rate-limits (unauthenticated probe, 2026-08-17)
+  source_operation: openapi/lengow-channel-execution-openapi.yml#Get Rate Limits
+- status: 403
+  title: Invalid or expired session
+  observed_body: '{"error": {"message": "No token in headers to access /orders API", "code": 403}}'
+  observed_at: GET https://api.lengow.io/v3.0/orders (unauthenticated probe, 2026-08-17)
+  remediation: re-run POST /access/get_token; session tokens live one hour
+  source_operation: openapi/lengow-channel-execution-openapi.yml#Get Current Session
+- status: 404
+  title: Not found
+  detail: Catalogue not found for the given account, or catalogue/product pair not found
+  observed_body: '{"error": {"message": "Not found: openapi.json", "code": 404}}'
+  source_operation: openapi/lengow-channel-execution-openapi.yml#get_catalogue_public_catalogues__catalogue_id__get
+- status: 409
+  title: Catalogue is in draft status; operation forbidden
+  detail: Product create/update/delete is rejected while the catalogue is still a draft
+  remediation: publish the catalogue before mutating products
+  source_operation: openapi/lengow-channel-execution-openapi.yml#upsert_products_public_catalogues__catalogue_id__products_post
+- status: 422
+  title: Validation Error
+  detail: 'FastAPI/Pydantic validation failure; body is {"detail": [ValidationError]} with loc/msg/type per field'
+  schema: HTTPValidationError
+  source_operation: openapi/lengow-channel-execution-openapi.yml#list_catalogues_public_catalogues_get
+- status: 429
+  title: Too Many Requests
+  detail: The middleware rate-limit bucket is exhausted for this route
+  observed_example: '{"error": {"code": 429, "message": "Request limitation: 500 reached on /v3.0/orders"}}'
+  headers:
+  - name: Retry-After
+    description: Seconds until the current fixed window expires
+  remediation: honour Retry-After; call GET /rate-limits to read remaining_credit and remaining_time per route
+  source_operation: openapi/lengow-channel-execution-openapi.yml#components/responses/TooManyRequests
+- status: 500
+  title: Rate-limit state could not be retrieved
+  source_operation: openapi/lengow-channel-execution-openapi.yml#Get Rate Limits
+- status: 503
+  title: Service unavailable
+  detail: Returned by the product report export when the report cannot be produced
+  source_operation: openapi/lengow-channel-execution-openapi.yml#Get product reports
+partial_success:
+- status: 207
+  title: Multi-Status
+  detail: >-
+    Batch catalogue writes return per-product outcomes rather than failing the request. A 207 is NOT a
+    success — each item in the response array carries its own result and must be inspected.
+  source_operations:
+  - upsert_products_public_catalogues__catalogue_id__products_post
+  - update_products_public_catalogues__catalogue_id__products_patch
+  - delete_products_public_catalogues__catalogue_id__products_delete

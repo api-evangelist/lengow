@@ -1,0 +1,192 @@
+generated: '2026-08-17'
+method: generated
+source: openapi/lengow-channel-execution-openapi.yml
+description: Recommended x-agentic-access execution contracts, classified heuristically from
+  the OpenAPI. A governance starting point for exposing this API to AI agents — review and bind
+  audience per deployment. See research/curity/agentic-governance/.
+summary:
+  operations: 14
+  by_action_class:
+    acting: 6
+    connected: 8
+  by_consequence:
+    write: 6
+    read: 8
+  human_in_the_loop_required: 0
+operations:
+- path: /access/get_token
+  method: post
+  operationId: Get Authentication Token
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /me
+  method: get
+  operationId: Get Current Session
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /rate-limits
+  method: get
+  operationId: Get Rate Limits
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1.0/catalogues
+  method: get
+  operationId: list_catalogues_public_catalogues_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1.0/catalogues/{catalogue_id}
+  method: get
+  operationId: get_catalogue_public_catalogues__catalogue_id__get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1.0/catalogues/{catalogue_id}/attributes
+  method: get
+  operationId: list_attributes_public_catalogues__catalogue_id__attributes_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1.0/catalogues/{catalogue_id}/products
+  method: delete
+  operationId: delete_products_public_catalogues__catalogue_id__products_delete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1.0/catalogues/{catalogue_id}/products
+  method: get
+  operationId: list_products_public_catalogues__catalogue_id__products_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1.0/catalogues/{catalogue_id}/products
+  method: patch
+  operationId: update_products_public_catalogues__catalogue_id__products_patch
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1.0/catalogues/{catalogue_id}/products
+  method: post
+  operationId: upsert_products_public_catalogues__catalogue_id__products_post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1.0/catalogues/{catalogue_id}/products/{product_id_value}
+  method: delete
+  operationId: delete_product_public_catalogues__catalogue_id__products__product_id_value__delete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1.0/catalogues/{catalogue_id}/products/{product_id_value}
+  method: get
+  operationId: get_product_public_catalogues__catalogue_id__products__product_id_value__get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1.0/catalogues/{catalogue_id}/products/{product_id_value}
+  method: patch
+  operationId: update_product_public_catalogues__catalogue_id__products__product_id_value__patch
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v3.0/report/export
+  method: get
+  operationId: Get product reports
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none

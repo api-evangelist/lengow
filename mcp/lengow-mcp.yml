@@ -1,0 +1,75 @@
+generated: '2026-08-17'
+method: derived
+status: candidate
+source: openapi/lengow-channel-execution-openapi.yml
+searched:
+  result: none
+  note: >-
+    No Lengow MCP server exists. Searched the docs (api.lengow.io/docs, docs.lengow.io), the help centre,
+    the GitHub org (18 repos — five e-commerce plugins, no MCP package), npm and PyPI. Lengow writes
+    ABOUT MCP on its blog ("MCP: the protocol every AI shopping agent (now) depends on") but ships no
+    server of its own. No /mcp or /sse endpoint was guessed or probed into existence.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: searched
+no_pointer_reason: >-
+  This file is a DERIVED candidate, not a provider surface. No `type: MCPServer` pointer is wired into
+  apis.yml, because that pointer asserts the provider ships an MCP server and Lengow does not.
+tools:
+- name: get_rate_limits
+  description: List every API route available to the current login with its quota, remaining credit and window
+  source_operation: openapi/lengow-channel-execution-openapi.yml#Get Rate Limits
+- name: get_current_session
+  description: Return the current session description and the expiration date of the session token
+  source_operation: openapi/lengow-channel-execution-openapi.yml#Get Current Session
+- name: list_catalogues
+  description: List the product catalogues associated with an account
+  source_operation: openapi/lengow-channel-execution-openapi.yml#list_catalogues_public_catalogues_get
+- name: get_catalogue
+  description: Retrieve one catalogue's metadata
+  source_operation: openapi/lengow-channel-execution-openapi.yml#get_catalogue_public_catalogues__catalogue_id__get
+- name: list_catalogue_attributes
+  description: List the attribute keys present in a catalogue
+  source_operation: openapi/lengow-channel-execution-openapi.yml#list_attributes_public_catalogues__catalogue_id__attributes_get
+- name: list_products
+  description: List products in a catalogue, paginated
+  source_operation: openapi/lengow-channel-execution-openapi.yml#list_products_public_catalogues__catalogue_id__products_get
+- name: get_product
+  description: Retrieve a single product from a catalogue
+  source_operation: openapi/lengow-channel-execution-openapi.yml#get_product_public_catalogues__catalogue_id__products__product_id_value__get
+- name: upsert_products
+  description: Create or replace a batch of products in a catalogue (207 multi-status)
+  source_operation: openapi/lengow-channel-execution-openapi.yml#upsert_products_public_catalogues__catalogue_id__products_post
+  write: true
+- name: update_products
+  description: Update a batch of products in a catalogue (207 multi-status)
+  source_operation: openapi/lengow-channel-execution-openapi.yml#update_products_public_catalogues__catalogue_id__products_patch
+  write: true
+- name: update_product
+  description: Update a single product in a catalogue
+  source_operation: openapi/lengow-channel-execution-openapi.yml#update_product_public_catalogues__catalogue_id__products__product_id_value__patch
+  write: true
+- name: delete_product
+  description: Delete a single product from a catalogue
+  source_operation: openapi/lengow-channel-execution-openapi.yml#delete_product_public_catalogues__catalogue_id__products__product_id_value__delete
+  write: true
+- name: delete_products
+  description: Delete multiple products from a catalogue (207 multi-status)
+  source_operation: openapi/lengow-channel-execution-openapi.yml#delete_products_public_catalogues__catalogue_id__products_delete
+  write: true
+- name: get_product_report
+  description: Download the last product integration report for a feed as CSV
+  source_operation: openapi/lengow-channel-execution-openapi.yml#Get product reports
+excluded:
+- name: get_authentication_token
+  reason: credential exchange; a server should hold the access_token/secret pair and manage the session itself, not expose it as a tool
+agent_notes:
+- Every catalogue tool requires account_id as a query parameter — an agent must be told which account it acts for.
+- Batch writes return HTTP 207 with per-item results; the HTTP status alone does not indicate success.
+- There is no idempotency key, so a retried write is a real second write.
+- The v3.0 order actions (accept, refuse, ship, cancel, refund) are NOT in the published OpenAPI and are
+  therefore deliberately absent from this candidate tool list rather than reconstructed from prose.

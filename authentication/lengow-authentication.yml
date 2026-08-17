@@ -1,0 +1,61 @@
+generated: '2026-08-17'
+method: searched
+source: openapi/lengow-channel-execution-openapi.yml
+docs: https://docs.lengow.io/#authentication
+docs_secondary: https://api.lengow.io/docs/
+summary:
+  types:
+  - http
+  api_key_in: []
+  oauth2_flows: []
+  model: two-key credential exchange for a short-lived bearer session token
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  sources:
+  - openapi/lengow-channel-execution-openapi.yml
+flow:
+  step_1:
+    description: >-
+      Exchange the account's two long-lived API keys for a session token. Both keys are issued in the API
+      section of the Lengow account and are unique per (sub)account; generating a new pair automatically
+      revokes the previous one.
+    operation: POST https://api.lengow.io/access/get_token
+    body_params:
+    - name: access_token
+      required: true
+      description: Access token of the application, from the API section of the Lengow account
+    - name: secret
+      required: true
+      description: Secret of the application, from the API section of the Lengow account
+    response: '{"token": "<session token>", "account_id": <int>}'
+  step_2:
+    description: >-
+      Send the session token on every subsequent request in an Authorization header. The docs show the
+      raw token value with no "Bearer " prefix in the curl examples, while the OpenAPI declares an
+      http/bearer scheme — clients should follow the docs example.
+    header: 'Authorization: ${TOKEN}'
+  step_3:
+    description: Check remaining session validity.
+    operation: GET https://api.lengow.io/me
+    returns: current session description including the expiration date of the session token
+token:
+  lifetime: 1 hour
+  refresh: re-call POST /access/get_token; the docs state it is unnecessary to request a token per request
+  rotation: generating new keys in the account UI revokes previously generated keys
+  subaccounts: API keys are per (sub)account, so each subaccount authenticates separately
+failure_modes:
+- status: 400
+  operation: POST /access/get_token
+  meaning: authentication error (bad access_token/secret pair)
+- status: 401
+  meaning: 'missing, invalid, or expired authentication token (example body: {"error": {"message": "Missing authentication token", "code": 401}})'
+- status: 403
+  meaning: 'invalid or expired session, or no token in headers (example body: {"error": {"message": "No token in headers to access /orders API", "code": 403}})'
+not_supported:
+- oauth2
+- openIdConnect
+- mutualTLS
+- api key in query string
+- scopes / granular permissions (there is no scope surface; a session token carries the account's full API rights)

@@ -1,0 +1,170 @@
+generated: '2026-08-17'
+method: derived
+source: >-
+  openapi/lengow-channel-execution-openapi.yml (components.schemas + path parameters), enriched from the
+  order/marketplace object reference at https://docs.lengow.io/
+note: >-
+  Two disjoint entity clusters live behind one host. The CATALOGUE cluster (v1.0) is fully typed in the
+  published OpenAPI. The ORDER cluster (v3.0) is documented only in prose at docs.lengow.io and has no
+  machine-readable schemas — its entities below are derived from the documented objects and their id
+  fields, and are marked spec_backed: false so a consumer knows the difference.
+identifiers:
+  account_id: integer; required as a query parameter on every catalogue operation and most v3.0 routes
+  catalogue_id: opaque path identifier for a catalogue
+  product_id_value: the value of the catalogue's product_id_key for one product (the key itself is per-catalogue)
+  feed_id: integer identifying an outbound feed / channel export
+  marketplace_order_id: the marketplace's own order reference, not Lengow's
+  merchant_order_id: the merchant's internal id, written onto a Lengow order to mark it as imported
+entities:
+- name: Account
+  spec_backed: partial
+  description: A Lengow account (or subaccount) — the tenancy boundary. Every API key pair belongs to one account.
+  relationships:
+  - has_many: Catalogue
+    via: account_id
+  - has_many: Feed
+    via: account_id
+  - has_many: Order
+    via: account_id
+  - has_many: Account
+    via: child accounts (the v3 catalog/account and feed/account endpoints return an account and its children)
+- name: Session
+  spec_backed: true
+  schema: token + account_id returned by POST /access/get_token
+  description: A one-hour bearer session token bound to an account.
+  relationships:
+  - belongs_to: Account
+    via: account_id
+- name: Catalogue
+  spec_backed: true
+  schema: GetCatalogueResponse / ListCataloguesResponseItem
+  fields: [catalogue_id, name, status, source, additional_sources, product_id_key, products_count, channels_count, role, used_by, created_at, updated_at, indexed_at]
+  description: A product catalogue in the v1.0 API. status governs mutability — a draft catalogue rejects product writes with 409.
+  relationships:
+  - belongs_to: Account
+    via: account_id
+  - has_many: Product
+    via: catalogue_id
+  - has_many: Attribute
+    via: catalogue_id
+- name: Attribute
+  spec_backed: true
+  schema: ListAttributesResponse (paginated list of attribute keys)
+  description: An attribute key present in a catalogue. The set of keys is per-catalogue, not global.
+  relationships:
+  - belongs_to: Catalogue
+    via: catalogue_id
+- name: Product
+  spec_backed: true
+  schema: ListProductsResponseItem / GetProductResponse / UpsertProductsRequest items
+  fields: [product_id_value, attributes]
+  description: >-
+    One catalogue item, keyed by the catalogue's product_id_key. Free-form attributes map; batch writes
+    return per-item outcomes under HTTP 207.
+  relationships:
+  - belongs_to: Catalogue
+    via: catalogue_id
+  - has_many: Error
+    via: per-item errors array on batch write responses
+- name: ProductReportEntry
+  spec_backed: true
+  schema: Product (report shape) / ReportLinesResponse / Measures / DigestV2Response
+  fields: [product_id, feed_id, task_id, level, message, errors, additional_data, updated_at]
+  description: >-
+    A per-product integration result from sending products to a marketplace, exposed as CSV via
+    /v1.0/report/export and as counters/digests (products_in_feed, products_in_error, products_healthy,
+    products_published) in the report schemas.
+  relationships:
+  - belongs_to: Feed
+    via: feed_id
+  - has_many: Error
+    via: errors
+- name: Error
+  spec_backed: true
+  schema: Error / ErrorAttribute / ErrorIndicator / ErrorsResponseSeralizer
+  fields: [error_id, code, message, severity, attribute, header_slug, impacted_line_id, indicator]
+  description: A feed-integration error attached to a product or a feed line, with a severity and an impacted attribute.
+  relationships:
+  - belongs_to: ProductReportEntry
+    via: product_id
+- name: Feed
+  spec_backed: partial
+  description: An outbound export of a catalogue to one marketplace or advertising channel.
+  relationships:
+  - belongs_to: Account
+    via: account_id
+  - belongs_to: Catalogue
+    via: source catalogue
+  - has_many: ProductReportEntry
+    via: feed_id
+- name: Marketplace
+  spec_backed: false
+  description: >-
+    A channel Lengow integrates with. The marketplace object (docs.lengow.io) carries package,
+    country_iso_a2, country, name, legacy_code, logo, description, homepage, a features property, and an
+    orders block describing carriers, permitted actions and statuses.
+  relationships:
+  - has_many: Order
+    via: marketplace
+- name: Order
+  spec_backed: false
+  description: >-
+    A marketplace order imported into Lengow every 15 minutes, normalised onto a lengow_status. Carries
+    order_types nodes (is_express, is_delivered_by_marketplace, is_business, is_prime), a meta object
+    (e.g. shipping_deadline), account-currency amounts and original_* marketplace-currency amounts.
+  relationships:
+  - belongs_to: Account
+    via: account_id
+  - belongs_to: Marketplace
+    via: marketplace
+  - has_many: OrderLine
+    via: packages.cart
+  - has_many: OrderAction
+    via: order
+  - has_many: Document
+    via: order
+- name: OrderLine
+  spec_backed: false
+  description: A cart item on an order, with its own lengow_line_status and max_shipping_date where the marketplace supplies it.
+  relationships:
+  - belongs_to: Order
+    via: packages.cart
+- name: OrderAction
+  spec_backed: false
+  description: >-
+    One of accept, refuse, ship, cancel, refund, submitted against an order and asynchronously validated
+    by the marketplace. Which actions are legal depends on the order's lengow_status and on the
+    marketplace's own action map.
+  relationships:
+  - belongs_to: Order
+    via: order
+- name: Document
+  spec_backed: false
+  description: Invoice, delivery note, return note, VAT invoice data report (VIDR) or ZFS stock report attached to an order.
+  relationships:
+  - belongs_to: Order
+    via: order
+state_machine:
+  entity: Order
+  field: lengow_status
+  states:
+  - {status: new, actions: []}
+  - {status: waiting_acceptance, actions: [accept, refuse]}
+  - {status: refused, actions: []}
+  - {status: accepted, actions: []}
+  - {status: waiting_shipment, actions: [ship, cancel, refund]}
+  - {status: shipped, actions: [refund]}
+  - {status: closed, actions: []}
+  - {status: canceled, actions: [refund]}
+  - {status: refunding, actions: []}
+  - {status: refunded, actions: []}
+  - {status: partial_refunded, actions: []}
+  - {status: to_refund, actions: [refund]}
+  - {status: pickup_to_prepare, actions: [], note: eBay only}
+  - {status: to_pickup, actions: [], note: eBay only}
+  - {status: pickup_completed, actions: [], note: eBay only}
+  - {status: pickup_canceled, actions: [], note: eBay only}
+  note: >-
+    lengow_status is Lengow's normalisation of every marketplace's own status vocabulary — it is the
+    field to filter on. The action set above is the Lengow-level maximum; the marketplace metadata
+    endpoint is authoritative for what is actually permitted per marketplace.

@@ -1,0 +1,98 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  https://github.com/lengow (GitHub org repo list + releases/latest via api.github.com). npm, PyPI and
+  Packagist were queried and hold no first-party Lengow client library.
+note: >-
+  Lengow ships no generic language SDK. Its first-party distribution is a set of e-commerce PLATFORM
+  PLUGINS (connectors) published as GitHub releases — there is no package-manager registry entry for
+  any of them, so `registry: github-releases` and the version/date below come from the repository's
+  latest release tag rather than a registry metadata endpoint. All five actively released connectors
+  shipped within the last three months, which is a healthy currency signal for a plugin fleet.
+registries_checked:
+- registry: npm
+  query: lengow
+  result: no first-party package
+- registry: pypi
+  query: lengow
+  result: 404
+- registry: packagist
+  query: lengow
+  result: >-
+    only lengow/php-quickstart, a fork of the Zuora PHP quickstart — not a Lengow client library;
+    thelia/lengow-module is a third-party Thelia connector, not first-party
+packages:
+- language: php
+  registry: github-releases
+  name: lengow/plugin-prestashop
+  url: https://github.com/lengow/plugin-prestashop
+  install: download the release ZIP and install as a PrestaShop module
+  official: true
+  kind: platform-plugin
+  platform: PrestaShop
+  version: v4.2.1
+  published: '2026-08-13'
+- language: php
+  registry: github-releases
+  name: lengow/plugin-magento2
+  url: https://github.com/lengow/plugin-magento2
+  install: download the release ZIP and install as a Magento 2 module
+  official: true
+  kind: platform-plugin
+  platform: Magento 2
+  version: v1.9.0
+  published: '2026-07-23'
+- language: php
+  registry: github-releases
+  name: lengow/plugin-woocommerce
+  url: https://github.com/lengow/plugin-woocommerce
+  install: download the release ZIP and install as a WordPress/WooCommerce plugin
+  official: true
+  kind: platform-plugin
+  platform: WooCommerce
+  version: v2.8.2
+  published: '2026-06-03'
+- language: php
+  registry: github-releases
+  name: lengow/plugin-shopware6
+  url: https://github.com/lengow/plugin-shopware6
+  install: download the release ZIP and install as a Shopware 6 plugin
+  official: true
+  kind: platform-plugin
+  platform: Shopware 6
+  version: v2.2.5
+  published: '2026-08-06'
+- language: javascript
+  registry: github-releases
+  name: lengow/salesforce-cartridge
+  url: https://github.com/lengow/salesforce-cartridge
+  install: install the cartridge in Salesforce B2C Commerce (SFRA)
+  official: true
+  kind: platform-plugin
+  platform: Salesforce Commerce Cloud
+  version: v22.1.2
+  published: '2026-07-30'
+- language: php
+  registry: github-releases
+  name: lengow/plugin-shopware
+  url: https://github.com/lengow/plugin-shopware
+  install: download the source and install as a Shopware 5 plugin
+  official: true
+  kind: platform-plugin
+  platform: Shopware 5 (legacy)
+  version: null
+  published: null
+  note: repository is public and was pushed 2025-10-30, but publishes no GitHub release, so no version is readable
+- language: php
+  registry: github-releases
+  name: lengow/plugin-magento
+  url: https://github.com/lengow/plugin-magento
+  install: download the source and install as a Magento 1 module
+  official: true
+  kind: platform-plugin
+  platform: Magento 1 (legacy)
+  version: null
+  published: null
+  note: >-
+    no GitHub release published; last repository push 2022-01-28, consistent with Magento 1 end-of-life —
+    recorded as an abandonment signal, not a currency claim

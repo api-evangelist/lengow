@@ -1,0 +1,62 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Lengow Channel Execution API
+  version: 1.0.0
+x-generated: '2026-08-17'
+x-method: generated
+x-source: >-
+  Enhancements API Evangelist applied on top of the verbatim harvest at
+  openapi/_original/lengow-channel-execution-openapi.json. The original is never mutated.
+extends: openapi/_original/lengow-channel-execution-openapi.json
+actions:
+- target: $
+  description: >-
+    The harvested document is OpenAPI 3.0.3 but carries Swagger-2 residue (host / basePath / schemes)
+    and declares no servers[]. Add the production server the documentation states, so tooling can
+    resolve request URLs without reading the legacy keys.
+  update:
+    servers:
+    - url: https://api.lengow.io
+      description: Production
+- target: $.info
+  update:
+    x-apievangelist-profile: https://apis.io/provider/lengow
+    x-apievangelist-harvested-from: https://api.lengow.io/docs/
+    x-apievangelist-harvest-note: >-
+      The spec is not served as a standalone document; it is embedded inline in the ReDoc page at
+      /docs/. /openapi.json, /openapi.yaml, /swagger.json and /api-docs all return the API's own 404
+      envelope.
+    x-apievangelist-surface-note: >-
+      This document covers only part of the public API. Orders, order actions, marketplace metadata and
+      documents (the v3.0 surface merchants integrate first) are documented in prose at docs.lengow.io
+      and have no machine-readable contract.
+- target: $.components.securitySchemes.bearerAuth
+  description: Record how the bearer token is actually obtained and how long it lives.
+  update:
+    description: >-
+      Session token obtained from POST /access/get_token by exchanging the account's access_token and
+      secret. Valid for one hour; check remaining validity with GET /me. The documentation's curl
+      examples send the raw token value in the Authorization header without a "Bearer " prefix.
+    x-token-lifetime-seconds: 3600
+    x-token-endpoint: https://api.lengow.io/access/get_token
+- target: $.paths['/v1.0/catalogues']
+  description: Flag the whole v1.0 catalogue surface as pre-stable, as every operation summary states.
+  update:
+    x-stability: beta
+- target: $.components.responses.TooManyRequests
+  update:
+    x-rate-limit-introspection: GET https://api.lengow.io/rate-limits
+    x-rate-limit-model: fixed-window, per-route, per-login
+- target: $.paths['/v1.0/report/export']
+  description: The 10 requests/minute cap on this endpoint is published in the docs but absent from the spec.
+  update:
+    x-rate-limit: 10 requests per minute
+- target: $.info
+  description: Record the conventions this API does NOT implement, so an agent plans for them.
+  update:
+    x-agent-notes:
+      idempotency: none — no Idempotency-Key on any write; retries are real second writes
+      request_id: none — no correlation header is returned
+      webhooks: none — integration is pull-only; Lengow polls marketplaces every 15 minutes
+      partial_success: batch catalogue writes return HTTP 207 with per-item results; inspect the array, not the status
+      error_format: 'vendor envelope {"error": {"message", "code"}}; v1.0 routes additionally emit FastAPI 422 {"detail": [...]}'

@@ -1,0 +1,114 @@
+generated: '2026-08-17'
+method: searched
+source: https://docs.lengow.io/#api-release-notes
+title: API Release Notes
+note: >-
+  Lengow maintains a dated, categorised API release-note section inside its API documentation rather than
+  a separate changelog site. Each entry names a category of change, the impacted API, the release date
+  and a description. The published categories are: New feature, Structure change, Data change,
+  Deprecation (functionality that will be deprecated) and Removal (functionality that will be removed
+  soon) — so breaking-vs-additive intent is stated. Entries are grouped into "Current Release" and
+  "Released". Dates are month-precision for recent entries and day-precision for older ones. Recent
+  window captured below; the live page is the source of truth.
+scheme: dated release notes, categorised by change type, per impacted API
+current_version: v3.0 (orders/marketplaces/documents/reports); v1.0 catalogues API in BETA
+current_release:
+  title: 'Orders: fix on delivery trackings'
+  category: Breaking data change
+  impacted: Orders API
+  date: '2026-05'
+  breaking: true
+  description: >-
+    In some cases (such as one tracking per line) order lines could appear duplicated in delivery
+    trackings. The fix removes the duplication and groups lines into trackings correctly.
+entries:
+- version: null
+  date: '2026-05'
+  category: Breaking data change
+  impacted: Orders API
+  breaking: true
+  highlight: 'Orders: fix on delivery trackings — order lines no longer duplicated across trackings'
+- version: null
+  date: '2024-10'
+  category: Non breaking new feature
+  impacted: Marketplaces API
+  breaking: false
+  highlight: 'new `features` property on the marketplace object, indicating special marketplace features such as Invoice Upload'
+- version: null
+  date: '2024-06'
+  category: Non breaking new feature
+  impacted: Orders API
+  breaking: false
+  highlight: 'new `lengow_line_status` filter, to search for orders with cart lines in specific statuses'
+- version: null
+  date: '2024-05'
+  category: New feature
+  impacted: Marketplaces reports
+  breaking: false
+  highlight: 'new report/export endpoint to download product integration reports as CSV'
+- version: null
+  date: '2023-12'
+  category: Non breaking data change
+  impacted: Orders API
+  breaking: false
+  highlight: 'new lengow order status `partial_refunded`, available for Veepee first'
+- version: null
+  date: '2023-12'
+  category: Non breaking data change
+  impacted: Orders API
+  breaking: false
+  highlight: 'new `shipping_deadline` attribute in order.meta, provided for some Mirakl marketplaces first'
+- version: null
+  date: '2023-07-25'
+  category: Data change
+  impacted: Orders API
+  breaking: true
+  highlight: >-
+    the default date filter (previous 7 days) is now applied when no valid date filter is provided;
+    previously an invalid filter meant no time bound, so order counts change for callers sending a bad filter
+- version: null
+  date: '2022-12-20'
+  category: Structure change
+  impacted: Orders API
+  breaking: false
+  highlight: '`max_shipping_date` added to order lines (packages.cart) where the marketplace provides it'
+- version: null
+  date: '2021-12-03'
+  category: New feature
+  impacted: Catalog API
+  breaking: false
+  highlight: "new /v3/catalog/account/ endpoint returning an account's and its child accounts' catalog information"
+- version: null
+  date: '2021-12-03'
+  category: New feature
+  impacted: Feed API
+  breaking: false
+  highlight: "new /v3/feed/account/ endpoint returning an account's and its child accounts' feed information"
+- version: null
+  date: '2019-08-19'
+  category: Structure change
+  impacted: Orders API
+  breaking: false
+  highlight: >-
+    `order_types` and `orderline_types` nodes added at order and cart level (is_express,
+    is_delivered_by_marketplace, is_business, is_prime)
+- version: null
+  date: '2019-03-25'
+  category: Structure change
+  impacted: Orders API
+  breaking: false
+  highlight: >-
+    original_* amount fields added (original_total_order, original_amount, original_currency, ...) carrying
+    marketplace-currency values alongside the account-currency fields
+- version: null
+  date: '2018-05-22'
+  category: New feature
+  impacted: Preprocessing
+  breaking: false
+  highlight: new preprocessing job API for launching preprocessing tasks
+- version: null
+  date: '2017-12-18'
+  category: Structure change
+  impacted: Orders API
+  breaking: true
+  highlight: '`category_name` field removed; the `category` field already carries the merchant category name'
