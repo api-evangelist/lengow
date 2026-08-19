@@ -14,7 +14,7 @@ url: https://raw.githubusercontent.com/api-evangelist/lengow/refs/heads/main/api
 image: https://www.lengow.com/wp-content/uploads/2024/12/Lengow_Homepage_Loop.png
 x-type: company
 x-source: serena-portfolio
-specificationVersion: '0.20'
+specificationVersion: '0.23'
 created: '2026-08-17'
 modified: '2026-08-17'
 tags:
