@@ -19,6 +19,17 @@ created: '2026-08-17'
 modified: '2026-08-17'
 tags:
 - Company
+- Software-as-a-Service
+- E-Commerce
+- Marketplaces
+- Product Feeds
+- Retail
+- Advertising
+- Order Management
+- Price Intelligence
+- France
+tags_raw:
+- Company
 - SaaS
 - E-Commerce
 - Marketplaces
@@ -39,6 +50,12 @@ apis:
   humanURL: https://api.lengow.io/docs/
   baseURL: https://api.lengow.io
   tags:
+  - E-Commerce
+  - Marketplaces
+  - Order
+  - Product Catalog
+  - Feeds
+  tags_raw:
   - e-commerce
   - marketplaces
   - orders
