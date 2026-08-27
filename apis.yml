@@ -40,30 +40,16 @@ tags_raw:
 - Price Intelligence
 - France
 apis:
-- name: Lengow Channel Execution API
-  description: >-
-    REST API for Lengow Channel Execution (NetMarkets marketplace management and NetAmplify ads feed management).
-    Covers session-token authentication, per-route rate-limit introspection, marketplace product integration
-    reports, and the beta v1.0 Catalogues API for listing, reading, creating, updating and deleting products and
-    attributes. Orders, order actions, marketplace metadata and documents are documented in prose at docs.lengow.io
-    on the same api.lengow.io host but are not part of the published OpenAPI.
+- aid: lengow:lengow-authentication-api
+  name: Lengow Authentication API
+  description: The Authentication API from Lengow — 2 operation(s) for authentication.
   humanURL: https://api.lengow.io/docs/
   baseURL: https://api.lengow.io
   tags:
-  - E-Commerce
-  - Marketplaces
-  - Order
-  - Product Catalog
-  - Feeds
-  tags_raw:
-  - e-commerce
-  - marketplaces
-  - orders
-  - product-catalog
-  - feeds
+  - Authentication
   properties:
   - type: OpenAPI
-    url: openapi/lengow-channel-execution-openapi.yml
+    url: openapi/lengow-authentication-api-openapi.yml
   - type: Documentation
     url: https://api.lengow.io/docs/
   - type: APIReference
@@ -80,8 +66,84 @@ apis:
     url: conventions/lengow-conventions.yml
   - type: DataModel
     url: data-model/lengow-data-model.yml
-  - type: Overlay
-    url: overlays/lengow-channel-execution-overlay.yaml
+- aid: lengow:lengow-catalogues-api
+  name: Lengow Catalogues API
+  description: The Catalogues API from Lengow — 5 operation(s) for catalogues.
+  humanURL: https://api.lengow.io/docs/
+  baseURL: https://api.lengow.io
+  tags:
+  - Catalogues
+  properties:
+  - type: OpenAPI
+    url: openapi/lengow-catalogues-api-openapi.yml
+  - type: Documentation
+    url: https://api.lengow.io/docs/
+  - type: APIReference
+    url: https://docs.lengow.io/
+  - type: GettingStarted
+    url: https://help.lengow.com/hc/en-us/articles/360011980072-Getting-started-on-the-Lengow-API
+  - type: Authentication
+    url: authentication/lengow-authentication.yml
+  - type: RateLimits
+    url: rate-limits/lengow-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/lengow-problem-types.yml
+  - type: Conventions
+    url: conventions/lengow-conventions.yml
+  - type: DataModel
+    url: data-model/lengow-data-model.yml
+- aid: lengow:lengow-marketplaces-api
+  name: Lengow Marketplaces API
+  description: The Marketplaces API from Lengow — 1 operation(s) for marketplaces.
+  humanURL: https://api.lengow.io/docs/
+  baseURL: https://api.lengow.io
+  tags:
+  - Marketplaces
+  properties:
+  - type: OpenAPI
+    url: openapi/lengow-marketplaces-api-openapi.yml
+  - type: Documentation
+    url: https://api.lengow.io/docs/
+  - type: APIReference
+    url: https://docs.lengow.io/
+  - type: GettingStarted
+    url: https://help.lengow.com/hc/en-us/articles/360011980072-Getting-started-on-the-Lengow-API
+  - type: Authentication
+    url: authentication/lengow-authentication.yml
+  - type: RateLimits
+    url: rate-limits/lengow-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/lengow-problem-types.yml
+  - type: Conventions
+    url: conventions/lengow-conventions.yml
+  - type: DataModel
+    url: data-model/lengow-data-model.yml
+- aid: lengow:lengow-rate-limits-api
+  name: Lengow Rate limits API
+  description: The Rate limits API from Lengow — 1 operation(s) for rate limits.
+  humanURL: https://api.lengow.io/docs/
+  baseURL: https://api.lengow.io
+  tags:
+  - Rate limits
+  properties:
+  - type: OpenAPI
+    url: openapi/lengow-rate-limits-api-openapi.yml
+  - type: Documentation
+    url: https://api.lengow.io/docs/
+  - type: APIReference
+    url: https://docs.lengow.io/
+  - type: GettingStarted
+    url: https://help.lengow.com/hc/en-us/articles/360011980072-Getting-started-on-the-Lengow-API
+  - type: Authentication
+    url: authentication/lengow-authentication.yml
+  - type: RateLimits
+    url: rate-limits/lengow-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/lengow-problem-types.yml
+  - type: Conventions
+    url: conventions/lengow-conventions.yml
+  - type: DataModel
+    url: data-model/lengow-data-model.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
