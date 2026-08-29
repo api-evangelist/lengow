@@ -11,6 +11,18 @@ description: >-
   Authentication is a session token exchanged from an account access_token + secret pair. First-party e-commerce
   plugins are published on GitHub for PrestaShop, Magento 2, WooCommerce, Shopware 6 and Salesforce Commerce Cloud.
 url: https://raw.githubusercontent.com/api-evangelist/lengow/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://www.lengow.com/wp-content/uploads/2024/12/Lengow_Homepage_Loop.png
 x-type: company
 x-source: serena-portfolio
