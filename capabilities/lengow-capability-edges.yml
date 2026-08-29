@@ -1,0 +1,26 @@
+slug: lengow
+provider: Lengow
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Retail & Consumer Goods
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 1
+edges:
+- tag: Catalogues
+  spec_file: lengow-catalogues-api-openapi.yml
+  capability_id: BC-2370.10
+  capability_id_l1: BC-2370
+  capability_name: Item Master Data Management
+  confidence: 0.75
+  evidence: '''[BETA] List catalogues'', ''[BETA] List attributes'', ''[BETA] Create or replace products'',
+    ''[BETA] Update batch of products''; schemas ListAttributesResponse, GetProductResponse'
+  reason: CRUD over product catalogues, their attributes and individual product records — maintenance
+    of the canonical item/product record and its attributes, i.e. item master data management within product
+    information management.
