@@ -1,0 +1,1077 @@
+openapi: 3.2.0
+info:
+  contact:
+    email: support@lengow.com
+    name: Support
+    url: http://help.lengow.com
+  description: '# Getting started
+
+
+    Welcome to Lengow API documentation for Channel Execution solutions, including NetAmplify for Ads Feed Management and NetMarkets for Marketplace Management.
+
+
+    Lengow API is a REST-based API that allows you to:
+
+
+    * List and retrieve the orders of your account
+
+    * Execute actions on orders: acceptance, shipment, cancellation, and refund
+
+    * Display the complete list of possible order actions authorized by each marketplace, at which status and with which mandatory or optional parameters
+
+    * Retrieve invoice documents
+
+    * Communicate with Zalando warehouse
+
+
+    ## Technical Aspects
+
+
+    * The API respects the `REST` fundamentals.
+
+    * The base URL for the latest version is `api.lengow.io/v3.0` over `HTTPS`.
+
+    * All data is sent and received as `JSON` by default.
+
+
+    **Production URL:** https://api.lengow.io
+
+
+    ### Specific types
+
+
+    | types      | Description                            |
+
+    |------------|----------------------------------------|
+
+    | Country    | Depending on resources, countries are specified as two ([ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2)) or three characters [ISO 3166-1 alpha-3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) |
+
+    | Date       | All date/time values are specified in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) ex: `2020-03-16T04:46:00+00:00`|
+
+    | Currency   | All currencies are specified as three characters ([ISO 4217](https://en.wikipedia.org/wiki/ISO_4217)) |
+
+    | Money      | decimal or string |
+
+
+    # Manage orders
+
+
+    | Method           | Endpoint                             | Description                                                                                                                                                                                                                               |
+
+    |------------------|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+    | GET, POST, PATCH | https://api.lengow.io/v3.0/orders/ | This endpoint allows you to retrieve and list your account orders (including the details of the order), mark the order with your internal order ID, perform actions on orders and check if they succeed. Each endpoint is detailed below. |
+
+
+    ## List of order statuses
+
+
+    From a Marketplace point of view, they all have their order statuses.
+
+    In Lengow, we regroup and standardize all these statuses in the `lengow_status`.
+
+
+    If you wish to filter based on the order status when retrieving orders, we advise you to rely on the `lengow_status` parameter.
+
+
+    | Status             | Allowed action       | Description                                                                                                                            |
+
+    |--------------------|----------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+
+    | new                | None                 | Order was created but no action is available for now.                                                                                  |
+
+    | waiting_acceptance | accept, refuse       | The merchant has to accept or refuse the order. Automatic acceptance tool available on your Lengow account.                            |
+
+    | refused            | None                 | The order was refused by the merchant.                                                                                                 |
+
+    | accepted           | None                 | The order has been accepted by the merchant and waiting for the marketplace authorization for shipping.                                |
+
+    | waiting_shipment   | ship, cancel, refund | Depending on the marketplace the merchant can ship, cancel or refund the order.                                                        |
+
+    | shipped            | refund               | The order is waiting for the final marketplace validation for closing. Depending on the marketplace the merchant can refund the order. |
+
+    | closed             | None                 | The order is closed, no more actions are available.                                                                                    |
+
+    | canceled           | refund               | The order was canceled. Depending on the marketplace, the order can be refunded.                                                       |
+
+    | refunding          | None                 | The refund demand is waiting for the marketplace validation.                                                                           |
+
+    | refunded           | None                 | Like `closed` status, the order is closed and no more action are available.                                                            |
+
+    | partial_refunded   | None                 | Similar to `refunded`, but not all the lines have refunded status.                                                                     |
+
+    | pickup_to_prepare  | None                 | The merchant has to prepare the pickup. Specific to eBay                                                                               |
+
+    | to_pickup          | None                 | The order is ready for pickup. Specific to eBay                                                                                        |
+
+    | pickup_completed   | None                 | The order has been picked up by the buyer. Specific to eBay                                                                            |
+
+    | pickup_canceled    | None                 | The pickup has been cancelled. Specific to eBay                                                                                        |
+
+    | to_refund          | refund               | The merchant has to refund the order.                                                                                                  |
+
+
+
+    ## Orders Workflow
+
+
+    The Order retrieval and update process usually flows like this with Lengow REST API:
+
+
+    1. Order is placed on a marketplace
+
+    2. Order is retrieved from the marketplace by Lengow every 15 minutes
+
+    3. Merchants will retrieve orders that haven''t already been imported into their system. Refer to [get order endpoint](#tag/Orders/operation/Get%20Orders%20List) and the main filter to retrieve the order.
+
+    4. Once those orders have been imported into their system successfully, the merchant can mark them by setting the merchant order ID. Refer to [set merchant order ID endpoint](#tag/Orders/operation/Set%20Order%20Merchant%20ID).
+
+    5. Then Orders may be updated with 5 actions: Accept, Refuse, Ship, Cancel and Refund. Refers to [create an action on an order endpoint](#tag/Orders/operation/Order%20action).
+
+    Acceptation may be automated by activating automatic order acceptance on your Lengow [account](https://my.lengow.io/company/orders/acceptation).
+
+    To know which action is available by marketplace and which parameters are required for each action, refer to [get marketplace information endpoint](#tag/Marketplaces/operation/Get%20information%20on%20marketplaces).
+
+    7. Merchant can list all the actions on the orders and verify if they have been processed by the marketplace. Refer to [List all actions on orders endpoint](#tag/Orders/operation/Order%20action)
+
+
+
+    The diagram below provides a simplified representation of the Lengow order workflow. It does not consider the specificities of each marketplace. It would be best to analyse the statuses and possible actions for each of your marketplaces individually. [get marketplace information endpoint](#tag/Marketplaces/operation/Get%20information%20on%20marketplaces)
+
+
+    ![ORDER_WORKFLOW](/static/ORDER_WORKFLOW.png)'
+  license:
+    name: Proprietary
+    url: http://my.lengow.io
+  termsOfService: http://swagger.io/terms/
+  title: Lengow API - Channel Execution Marketplaces API
+  version: '1.0'
+  x-logo:
+    altText: Lengow API
+    backgroundColor: '#FFFFFF'
+    url: /static/lengow_brand.png
+servers:
+- url: https://api.lengow.io
+  description: Production
+host: api.lengow.io
+basePath: /
+schemes: https
+consumes: ' application/json'
+tags:
+- name: Marketplaces
+paths:
+  /v3.0/report/export:
+    get:
+      AvailableFilters:
+        properties:
+          error_types:
+            description: List of types that can be used to filter errors. Only types with at least one error are returned.
+            type: array
+          severity_levels:
+            description: "List of types that can be\n    used to filter errors. Only types with at least one error are returned."
+            type: array
+        required:
+        - error_types
+        - severity_levels
+        type: object
+      DatabaseStatus:
+        properties:
+          host:
+            description: Database server host
+            type: string
+          name:
+            description: Database name
+            type: string
+        required:
+        - host
+        - name
+        type: object
+      DigestReportOffersEntry:
+        properties:
+          delta_product_healthy_rate:
+            description: Rate delta for healthy products since previous synchronization.
+            format: decimal
+            pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+            type:
+            - string
+            - 'null'
+          delta_products_in_error_rate:
+            description: Rate delta for products in error since previous synchronization.
+            format: decimal
+            pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+            type:
+            - string
+            - 'null'
+          delta_products_in_feed_rate:
+            description: Rate of change for products in feed since previous synchronization.
+            format: decimal
+            pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+            type:
+            - string
+            - 'null'
+          delta_products_with_warning_rate:
+            description: Rate delta for products with warning since previous synchronization.
+            format: decimal
+            pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+            type:
+            - string
+            - 'null'
+          last_report_date:
+            description: Last received report date for this report type.
+            type:
+            - string
+            - 'null'
+          products_healthy:
+            description: Number of healthy products.
+            type:
+            - integer
+            - 'null'
+          products_healthy_rate:
+            description: Rate of healthy products.
+            format: decimal
+            pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+            type:
+            - string
+            - 'null'
+          products_in_error:
+            description: Number of products in error.
+            type:
+            - integer
+            - 'null'
+          products_in_feed:
+            description: Total number of products in the feed.
+            type:
+            - integer
+            - 'null'
+          products_with_warning:
+            description: Number of products with warning.
+            type:
+            - integer
+            - 'null'
+          timestamp:
+            description: 'Report timestamp. Example: "2019-12-24 21:03:00"'
+            type:
+            - string
+            - 'null'
+        required:
+        - delta_product_healthy_rate
+        - delta_products_in_error_rate
+        - delta_products_in_feed_rate
+        - delta_products_with_warning_rate
+        - products_healthy
+        - products_healthy_rate
+        - products_in_error
+        - products_in_feed
+        - products_with_warning
+        - timestamp
+        type: object
+      DigestReportProductsEntry:
+        properties:
+          delta_product_healthy_rate:
+            description: Rate delta for healthy products since previous synchronization.
+            format: decimal
+            pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+            type:
+            - string
+            - 'null'
+          delta_products_in_error_rate:
+            description: Rate delta for products in error since previous synchronization.
+            format: decimal
+            pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+            type:
+            - string
+            - 'null'
+          delta_products_in_feed_rate:
+            description: Rate of change for products in feed since previous synchronization.
+            format: decimal
+            pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+            type:
+            - string
+            - 'null'
+          delta_products_with_warning_rate:
+            description: Rate delta for products with warning since previous synchronization.
+            format: decimal
+            pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+            type:
+            - string
+            - 'null'
+          last_report_date:
+            description: Last received report date for this report type.
+            type:
+            - string
+            - 'null'
+          products_healthy:
+            description: Number of healthy products.
+            type:
+            - integer
+            - 'null'
+          products_healthy_rate:
+            description: Rate of healthy products.
+            format: decimal
+            pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+            type:
+            - string
+            - 'null'
+          products_in_error:
+            description: Number of products in error.
+            type:
+            - integer
+            - 'null'
+          products_in_feed:
+            description: Total number of products in the feed.
+            type:
+            - integer
+            - 'null'
+          products_with_warning:
+            description: Number of products with warning.
+            type:
+            - integer
+            - 'null'
+          timestamp:
+            description: 'Report timestamp. Example: "2019-12-24 21:03:00"'
+            type:
+            - string
+            - 'null'
+        required:
+        - delta_product_healthy_rate
+        - delta_products_in_error_rate
+        - delta_products_in_feed_rate
+        - delta_products_with_warning_rate
+        - products_healthy
+        - products_healthy_rate
+        - products_in_error
+        - products_in_feed
+        - products_with_warning
+        - timestamp
+        type: object
+      DigestResponse:
+        properties:
+          available_filters:
+            $ref: '#/components/schemas/AvailableFilters'
+          last_report_date:
+            type: string
+          measures:
+            $ref: '#/components/schemas/Measures'
+        required:
+        - available_filters
+        - last_report_date
+        - measures
+        type: object
+      DigestV2Reports:
+        properties:
+          offers:
+            $ref: '#/components/schemas/DigestReportOffersEntry'
+          products:
+            $ref: '#/components/schemas/DigestReportProductsEntry'
+        required:
+        - offers
+        - products
+        type: object
+      DigestV2Response:
+        properties:
+          reports:
+            $ref: '#/components/schemas/DigestV2Reports'
+        required:
+        - reports
+        type: object
+      Error:
+        properties:
+          attribute:
+            $ref: '#/components/schemas/ErrorAttribute'
+          code:
+            type: string
+          error_id:
+            type: integer
+          header_slug:
+            type: string
+          impacted_line_id:
+            type: integer
+          indicator:
+            $ref: '#/components/schemas/ErrorIndicator'
+          message:
+            type: string
+          severity:
+            type:
+            - string
+            - 'null'
+        required:
+        - attribute
+        - code
+        - error_id
+        - header_slug
+        - impacted_line_id
+        - indicator
+        - message
+        type: object
+      ErrorAttribute:
+        properties:
+          name:
+            type: string
+        required:
+        - name
+        type: object
+      ErrorIndicator:
+        properties:
+          count:
+            type: integer
+          type:
+            type: string
+        required:
+        - count
+        - type
+        type: object
+      ErrorsResponseSeralizer:
+        properties:
+          errors:
+            items:
+              $ref: '#/components/schemas/Error'
+            type: array
+          total_error_count:
+            type: integer
+        required:
+        - errors
+        - total_error_count
+        type: object
+      GroupsResponse:
+        properties:
+          error:
+            $ref: '#/components/schemas/SeverityResponse'
+          slug:
+            description: Identifier of the group
+            type: string
+          warning:
+            $ref: '#/components/schemas/SeverityResponse'
+        required:
+        - error
+        - slug
+        - warning
+        type: object
+      LineErrorCount:
+        properties:
+          count:
+            description: Number of lines in error.
+            type: integer
+        required:
+        - count
+        type: object
+      LineWarningCount:
+        properties:
+          count:
+            description: Number of lines with warning.
+            type: integer
+        required:
+        - count
+        type: object
+      Measures:
+        properties:
+          instances_in_error:
+            $ref: '#/components/schemas/LineErrorCount'
+          instances_with_warning:
+            $ref: '#/components/schemas/LineWarningCount'
+          products_in_error:
+            $ref: '#/components/schemas/ProductsErrorCount'
+          products_in_feed:
+            $ref: '#/components/schemas/ProductsSent'
+          products_published:
+            allOf:
+            - $ref: '#/components/schemas/ProductsPublished'
+            description: Number of products actually published.
+          products_with_warning:
+            $ref: '#/components/schemas/ProductsErrorCount'
+        required:
+        - instances_in_error
+        - instances_with_warning
+        - products_in_error
+        - products_in_feed
+        - products_published
+        - products_with_warning
+        type: object
+      Product:
+        properties:
+          additional_data:
+            description: Additional data attached on product.
+            type: object
+          errors:
+            description: Errors for the product.
+            type: object
+          feed_id:
+            description: Feed id attached for product.
+            type: integer
+          level:
+            type: integer
+          message:
+            description: Message attached for product.
+            type: string
+          product_id:
+            description: ID of the product.
+            type: string
+          task_id:
+            description: Task ID for the product.
+            type: string
+          updated_at:
+            type: string
+        required:
+        - additional_data
+        - errors
+        - feed_id
+        - level
+        - message
+        - product_id
+        - task_id
+        - updated_at
+        type: object
+      ProductsErrorCount:
+        properties:
+          count:
+            description: Number of products in error.
+            type: integer
+        required:
+        - count
+        type: object
+      ProductsPublished:
+        properties:
+          count:
+            description: Number of products actually published.
+            type: integer
+          percentage:
+            description: Percentage of products actually published.
+            type: integer
+        required:
+        - count
+        - percentage
+        type: object
+      ProductsResponse:
+        properties:
+          count:
+            description: Number of products in status online.
+            type: integer
+          limit:
+            description: Number of products to return.
+            type: integer
+          products:
+            items:
+              $ref: '#/components/schemas/Product'
+            type: array
+        required:
+        - count
+        - limit
+        - products
+        type: object
+      ProductsSent:
+        properties:
+          count:
+            description: Number of products sent to the channel.
+            type: integer
+          percentage:
+            description: Percentage of products sent to the channel.
+            type: integer
+        required:
+        - count
+        - percentage
+        type: object
+      ReportLinesResponse:
+        properties:
+          error_header_slug:
+            description: The slug of the high-level description of the error.
+            type: string
+          group_slug:
+            description: Identifier of the group.
+            type: string
+          header:
+            description: The list of the column names to be displayed. Attribute names are prefixed with `$`.
+            type: string
+          nb_products_impacted:
+            description: Number of distinct products impacted by the returned report lines.
+            type:
+            - integer
+            - 'null'
+          total_report_line_count:
+            description: Total number of report lines.
+            type: integer
+          values:
+            description: A list of arrays containing values. Each array has the same number of elements as `header`
+            type: array
+        required:
+        - error_header_slug
+        - group_slug
+        - header
+        - total_report_line_count
+        - values
+        type: object
+      SeverityResponse:
+        properties:
+          nb_instances:
+            description: Number of this severity events
+            type: integer
+          nb_products_impacted:
+            description: Number of products related to this severity event
+            type: integer
+        required:
+        - nb_instances
+        - nb_products_impacted
+        type: object
+      ShardStatus:
+        properties:
+          key:
+            description: Shard key
+            type: integer
+          ready:
+            description: False if the data is being migrated across servers
+            type: boolean
+        required:
+        - key
+        - ready
+        type: object
+      StatusResponse:
+        properties:
+          database:
+            $ref: '#/components/schemas/DatabaseStatus'
+          shard:
+            $ref: '#/components/schemas/ShardStatus'
+          status:
+            default: 200
+            description: HTTP Status
+            type: integer
+        required:
+        - database
+        - shard
+        type: object
+      description: 'Export errors
+
+
+        This API is used to generate exports in CSV, with `|` as field separator
+
+
+        Can return `503` status if data shard is being migrated'
+      operationId: Get product reports
+      parameters:
+      - description: feed_id Identifier of the feed.
+        in: query
+        name: feed_id
+        required: true
+        schema:
+          type: integer
+      - description: "Number of days to skip before the last report was received. \n\nWhen nb_days_to_skip equals 0, the last digest is returned. \n\nWhen nb_days_to_skip equals 1, the digest of the day before is returned.\n\nFor instance, if the last report was received today at 11:03, the last report received yesterday at 11:03 is considered."
+        in: query
+        name: nb_days_to_skip
+        schema:
+          default: 0
+          type: integer
+      - in: path
+        name: version
+        required: true
+        schema:
+          pattern: ^[0-9]+(.[0-9]+)?$
+          type: string
+      responses:
+        '200':
+          content:
+            text/csv:
+              schema:
+                type: string
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '503':
+          content:
+            application/json:
+              schema:
+                type: object
+      summary: Get product reports
+      tags:
+      - Marketplaces
+components:
+  schemas:
+    LineErrorCount:
+      properties:
+        count:
+          description: Number of lines in error.
+          type: integer
+      required:
+      - count
+      type: object
+    LineWarningCount:
+      properties:
+        count:
+          description: Number of lines with warning.
+          type: integer
+      required:
+      - count
+      type: object
+    DigestV2Reports:
+      properties:
+        offers:
+          $ref: '#/components/schemas/DigestReportOffersEntry'
+        products:
+          $ref: '#/components/schemas/DigestReportProductsEntry'
+      required:
+      - offers
+      - products
+      type: object
+    Product:
+      properties:
+        additional_data:
+          description: Additional data attached on product.
+          type: object
+        errors:
+          description: Errors for the product.
+          type: object
+        feed_id:
+          description: Feed id attached for product.
+          type: integer
+        level:
+          type: integer
+        message:
+          description: Message attached for product.
+          type: string
+        product_id:
+          description: ID of the product.
+          type: string
+        task_id:
+          description: Task ID for the product.
+          type: string
+        updated_at:
+          type: string
+      required:
+      - additional_data
+      - errors
+      - feed_id
+      - level
+      - message
+      - product_id
+      - task_id
+      - updated_at
+      type: object
+    Error:
+      properties:
+        attribute:
+          $ref: '#/components/schemas/ErrorAttribute'
+        code:
+          type: string
+        error_id:
+          type: integer
+        header_slug:
+          type: string
+        impacted_line_id:
+          type: integer
+        indicator:
+          $ref: '#/components/schemas/ErrorIndicator'
+        message:
+          type: string
+        severity:
+          type:
+          - string
+          - 'null'
+      required:
+      - attribute
+      - code
+      - error_id
+      - header_slug
+      - impacted_line_id
+      - indicator
+      - message
+      type: object
+    DigestReportOffersEntry:
+      properties:
+        delta_product_healthy_rate:
+          description: Rate delta for healthy products since previous synchronization.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        delta_products_in_error_rate:
+          description: Rate delta for products in error since previous synchronization.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        delta_products_in_feed_rate:
+          description: Rate of change for products in feed since previous synchronization.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        delta_products_with_warning_rate:
+          description: Rate delta for products with warning since previous synchronization.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        last_report_date:
+          description: Last received report date for this report type.
+          type:
+          - string
+          - 'null'
+        products_healthy:
+          description: Number of healthy products.
+          type:
+          - integer
+          - 'null'
+        products_healthy_rate:
+          description: Rate of healthy products.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        products_in_error:
+          description: Number of products in error.
+          type:
+          - integer
+          - 'null'
+        products_in_feed:
+          description: Total number of products in the feed.
+          type:
+          - integer
+          - 'null'
+        products_with_warning:
+          description: Number of products with warning.
+          type:
+          - integer
+          - 'null'
+        timestamp:
+          description: 'Report timestamp. Example: "2019-12-24 21:03:00"'
+          type:
+          - string
+          - 'null'
+      required:
+      - delta_product_healthy_rate
+      - delta_products_in_error_rate
+      - delta_products_in_feed_rate
+      - delta_products_with_warning_rate
+      - products_healthy
+      - products_healthy_rate
+      - products_in_error
+      - products_in_feed
+      - products_with_warning
+      - timestamp
+      type: object
+    ErrorIndicator:
+      properties:
+        count:
+          type: integer
+        type:
+          type: string
+      required:
+      - count
+      - type
+      type: object
+    ErrorAttribute:
+      properties:
+        name:
+          type: string
+      required:
+      - name
+      type: object
+    ProductsSent:
+      properties:
+        count:
+          description: Number of products sent to the channel.
+          type: integer
+        percentage:
+          description: Percentage of products sent to the channel.
+          type: integer
+      required:
+      - count
+      - percentage
+      type: object
+    ProductsPublished:
+      properties:
+        count:
+          description: Number of products actually published.
+          type: integer
+        percentage:
+          description: Percentage of products actually published.
+          type: integer
+      required:
+      - count
+      - percentage
+      type: object
+    ShardStatus:
+      properties:
+        key:
+          description: Shard key
+          type: integer
+        ready:
+          description: False if the data is being migrated across servers
+          type: boolean
+      required:
+      - key
+      - ready
+      type: object
+    DatabaseStatus:
+      properties:
+        host:
+          description: Database server host
+          type: string
+        name:
+          description: Database name
+          type: string
+      required:
+      - host
+      - name
+      type: object
+    AvailableFilters:
+      properties:
+        error_types:
+          description: List of types that can be used to filter errors. Only types with at least one error are returned.
+          type: array
+        severity_levels:
+          description: "List of types that can be\n    used to filter errors. Only types with at least one error are returned."
+          type: array
+      required:
+      - error_types
+      - severity_levels
+      type: object
+    ProductsErrorCount:
+      properties:
+        count:
+          description: Number of products in error.
+          type: integer
+      required:
+      - count
+      type: object
+    DigestReportProductsEntry:
+      properties:
+        delta_product_healthy_rate:
+          description: Rate delta for healthy products since previous synchronization.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        delta_products_in_error_rate:
+          description: Rate delta for products in error since previous synchronization.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        delta_products_in_feed_rate:
+          description: Rate of change for products in feed since previous synchronization.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        delta_products_with_warning_rate:
+          description: Rate delta for products with warning since previous synchronization.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        last_report_date:
+          description: Last received report date for this report type.
+          type:
+          - string
+          - 'null'
+        products_healthy:
+          description: Number of healthy products.
+          type:
+          - integer
+          - 'null'
+        products_healthy_rate:
+          description: Rate of healthy products.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        products_in_error:
+          description: Number of products in error.
+          type:
+          - integer
+          - 'null'
+        products_in_feed:
+          description: Total number of products in the feed.
+          type:
+          - integer
+          - 'null'
+        products_with_warning:
+          description: Number of products with warning.
+          type:
+          - integer
+          - 'null'
+        timestamp:
+          description: 'Report timestamp. Example: "2019-12-24 21:03:00"'
+          type:
+          - string
+          - 'null'
+      required:
+      - delta_product_healthy_rate
+      - delta_products_in_error_rate
+      - delta_products_in_feed_rate
+      - delta_products_with_warning_rate
+      - products_healthy
+      - products_healthy_rate
+      - products_in_error
+      - products_in_feed
+      - products_with_warning
+      - timestamp
+      type: object
+    SeverityResponse:
+      properties:
+        nb_instances:
+          description: Number of this severity events
+          type: integer
+        nb_products_impacted:
+          description: Number of products related to this severity event
+          type: integer
+      required:
+      - nb_instances
+      - nb_products_impacted
+      type: object
+    Measures:
+      properties:
+        instances_in_error:
+          $ref: '#/components/schemas/LineErrorCount'
+        instances_with_warning:
+          $ref: '#/components/schemas/LineWarningCount'
+        products_in_error:
+          $ref: '#/components/schemas/ProductsErrorCount'
+        products_in_feed:
+          $ref: '#/components/schemas/ProductsSent'
+        products_published:
+          allOf:
+          - $ref: '#/components/schemas/ProductsPublished'
+          description: Number of products actually published.
+        products_with_warning:
+          $ref: '#/components/schemas/ProductsErrorCount'
+      required:
+      - instances_in_error
+      - instances_with_warning
+      - products_in_error
+      - products_in_feed
+      - products_published
+      - products_with_warning
+      type: object
+  responses:
+    TooManyRequests:
+      content:
+        application/json:
+          example:
+            error:
+              code: 429
+              message: 'Request limitation: 500 reached on /v3.0/orders'
+      description: The middleware rate-limit bucket is exhausted
+      headers:
+        Retry-After:
+          description: Seconds until the current fixed window expires
+          schema:
+            minimum: 0
+            type: integer
+  securitySchemes:
+    bearerAuth:
+      scheme: bearer
+      type: http
+x-tagGroups:
+- name: Reference
+  tags:
+  - Authentication
+  - Rate limits
+  - Marketplaces
+  - Catalogues

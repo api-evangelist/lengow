@@ -1,0 +1,241 @@
+openapi: 3.2.0
+info:
+  contact:
+    email: support@lengow.com
+    name: Support
+    url: http://help.lengow.com
+  description: '# Getting started
+
+
+    Welcome to Lengow API documentation for Channel Execution solutions, including NetAmplify for Ads Feed Management and NetMarkets for Marketplace Management.
+
+
+    Lengow API is a REST-based API that allows you to:
+
+
+    * List and retrieve the orders of your account
+
+    * Execute actions on orders: acceptance, shipment, cancellation, and refund
+
+    * Display the complete list of possible order actions authorized by each marketplace, at which status and with which mandatory or optional parameters
+
+    * Retrieve invoice documents
+
+    * Communicate with Zalando warehouse
+
+
+    ## Technical Aspects
+
+
+    * The API respects the `REST` fundamentals.
+
+    * The base URL for the latest version is `api.lengow.io/v3.0` over `HTTPS`.
+
+    * All data is sent and received as `JSON` by default.
+
+
+    **Production URL:** https://api.lengow.io
+
+
+    ### Specific types
+
+
+    | types      | Description                            |
+
+    |------------|----------------------------------------|
+
+    | Country    | Depending on resources, countries are specified as two ([ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2)) or three characters [ISO 3166-1 alpha-3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) |
+
+    | Date       | All date/time values are specified in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) ex: `2020-03-16T04:46:00+00:00`|
+
+    | Currency   | All currencies are specified as three characters ([ISO 4217](https://en.wikipedia.org/wiki/ISO_4217)) |
+
+    | Money      | decimal or string |
+
+
+    # Manage orders
+
+
+    | Method           | Endpoint                             | Description                                                                                                                                                                                                                               |
+
+    |------------------|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+    | GET, POST, PATCH | https://api.lengow.io/v3.0/orders/ | This endpoint allows you to retrieve and list your account orders (including the details of the order), mark the order with your internal order ID, perform actions on orders and check if they succeed. Each endpoint is detailed below. |
+
+
+    ## List of order statuses
+
+
+    From a Marketplace point of view, they all have their order statuses.
+
+    In Lengow, we regroup and standardize all these statuses in the `lengow_status`.
+
+
+    If you wish to filter based on the order status when retrieving orders, we advise you to rely on the `lengow_status` parameter.
+
+
+    | Status             | Allowed action       | Description                                                                                                                            |
+
+    |--------------------|----------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+
+    | new                | None                 | Order was created but no action is available for now.                                                                                  |
+
+    | waiting_acceptance | accept, refuse       | The merchant has to accept or refuse the order. Automatic acceptance tool available on your Lengow account.                            |
+
+    | refused            | None                 | The order was refused by the merchant.                                                                                                 |
+
+    | accepted           | None                 | The order has been accepted by the merchant and waiting for the marketplace authorization for shipping.                                |
+
+    | waiting_shipment   | ship, cancel, refund | Depending on the marketplace the merchant can ship, cancel or refund the order.                                                        |
+
+    | shipped            | refund               | The order is waiting for the final marketplace validation for closing. Depending on the marketplace the merchant can refund the order. |
+
+    | closed             | None                 | The order is closed, no more actions are available.                                                                                    |
+
+    | canceled           | refund               | The order was canceled. Depending on the marketplace, the order can be refunded.                                                       |
+
+    | refunding          | None                 | The refund demand is waiting for the marketplace validation.                                                                           |
+
+    | refunded           | None                 | Like `closed` status, the order is closed and no more action are available.                                                            |
+
+    | partial_refunded   | None                 | Similar to `refunded`, but not all the lines have refunded status.                                                                     |
+
+    | pickup_to_prepare  | None                 | The merchant has to prepare the pickup. Specific to eBay                                                                               |
+
+    | to_pickup          | None                 | The order is ready for pickup. Specific to eBay                                                                                        |
+
+    | pickup_completed   | None                 | The order has been picked up by the buyer. Specific to eBay                                                                            |
+
+    | pickup_canceled    | None                 | The pickup has been cancelled. Specific to eBay                                                                                        |
+
+    | to_refund          | refund               | The merchant has to refund the order.                                                                                                  |
+
+
+
+    ## Orders Workflow
+
+
+    The Order retrieval and update process usually flows like this with Lengow REST API:
+
+
+    1. Order is placed on a marketplace
+
+    2. Order is retrieved from the marketplace by Lengow every 15 minutes
+
+    3. Merchants will retrieve orders that haven''t already been imported into their system. Refer to [get order endpoint](#tag/Orders/operation/Get%20Orders%20List) and the main filter to retrieve the order.
+
+    4. Once those orders have been imported into their system successfully, the merchant can mark them by setting the merchant order ID. Refer to [set merchant order ID endpoint](#tag/Orders/operation/Set%20Order%20Merchant%20ID).
+
+    5. Then Orders may be updated with 5 actions: Accept, Refuse, Ship, Cancel and Refund. Refers to [create an action on an order endpoint](#tag/Orders/operation/Order%20action).
+
+    Acceptation may be automated by activating automatic order acceptance on your Lengow [account](https://my.lengow.io/company/orders/acceptation).
+
+    To know which action is available by marketplace and which parameters are required for each action, refer to [get marketplace information endpoint](#tag/Marketplaces/operation/Get%20information%20on%20marketplaces).
+
+    7. Merchant can list all the actions on the orders and verify if they have been processed by the marketplace. Refer to [List all actions on orders endpoint](#tag/Orders/operation/Order%20action)
+
+
+
+    The diagram below provides a simplified representation of the Lengow order workflow. It does not consider the specificities of each marketplace. It would be best to analyse the statuses and possible actions for each of your marketplaces individually. [get marketplace information endpoint](#tag/Marketplaces/operation/Get%20information%20on%20marketplaces)
+
+
+    ![ORDER_WORKFLOW](/static/ORDER_WORKFLOW.png)'
+  license:
+    name: Proprietary
+    url: http://my.lengow.io
+  termsOfService: http://swagger.io/terms/
+  title: Lengow API - Channel Execution Rate limits API
+  version: '1.0'
+  x-logo:
+    altText: Lengow API
+    backgroundColor: '#FFFFFF'
+    url: /static/lengow_brand.png
+servers:
+- url: https://api.lengow.io
+  description: Production
+host: api.lengow.io
+basePath: /
+schemes: https
+consumes: ' application/json'
+tags:
+- name: Rate limits
+paths:
+  /rate-limits:
+    get:
+      description: '`/rate-limits`
+
+
+        This authenticated endpoint returns every API route available to the current login and its configured fixed-window quota. `remaining_credit` is the current Redis bucket value, clamped to zero after exhaustion. `remaining_time` is expressed in seconds. Both remaining fields are `null` when rate limiting is disabled for a route.'
+      operationId: Get Rate Limits
+      produces:
+      - application/json
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+              - boundary: 500
+                method: GET
+                remaining_credit: 499
+                remaining_time: 42
+                url_base: /orders
+              schema:
+                items:
+                  properties:
+                    boundary:
+                      type:
+                      - integer
+                      - 'null'
+                    method:
+                      type: string
+                    remaining_credit:
+                      type:
+                      - integer
+                      - 'null'
+                    remaining_time:
+                      maximum: 60
+                      minimum: 0
+                      type:
+                      - integer
+                      - 'null'
+                    url_base:
+                      type: string
+                  required:
+                  - url_base
+                  - method
+                  - boundary
+                  - remaining_credit
+                  - remaining_time
+                  type: object
+                type: array
+          description: Available routes and current rate-limit state
+        '401':
+          content:
+            application/json:
+              example:
+                error:
+                  code: 401
+                  message: Invalid or expired authentication token
+          description: Missing, invalid, or expired authentication token
+        '500':
+          content:
+            application/json:
+              example:
+                error:
+                  code: 500
+                  message: Can't retrieve rate limits
+          description: Rate-limit state could not be retrieved
+      tags:
+      - Rate limits
+components:
+  securitySchemes:
+    bearerAuth:
+      scheme: bearer
+      type: http
+x-tagGroups:
+- name: Reference
+  tags:
+  - Authentication
+  - Rate limits
+  - Marketplaces
+  - Catalogues
