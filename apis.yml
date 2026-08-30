@@ -136,6 +136,8 @@ apis:
   humanURL: https://api.lengow.io/docs/
   baseURL: https://api.lengow.io
   tags:
+  - Rate Limits
+  tags_raw:
   - Rate limits
   properties:
   - type: OpenAPI
