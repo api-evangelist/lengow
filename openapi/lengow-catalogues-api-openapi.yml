@@ -7,139 +7,7 @@ info:
   description: '# Getting started
 
 
-    Welcome to Lengow API documentation for Channel Execution solutions, including NetAmplify for Ads Feed Management and NetMarkets for Marketplace Management.
-
-
-    Lengow API is a REST-based API that allows you to:
-
-
-    * List and retrieve the orders of your account
-
-    * Execute actions on orders: acceptance, shipment, cancellation, and refund
-
-    * Display the complete list of possible order actions authorized by each marketplace, at which status and with which mandatory or optional parameters
-
-    * Retrieve invoice documents
-
-    * Communicate with Zalando warehouse
-
-
-    ## Technical Aspects
-
-
-    * The API respects the `REST` fundamentals.
-
-    * The base URL for the latest version is `api.lengow.io/v3.0` over `HTTPS`.
-
-    * All data is sent and received as `JSON` by default.
-
-
-    **Production URL:** https://api.lengow.io
-
-
-    ### Specific types
-
-
-    | types      | Description                            |
-
-    |------------|----------------------------------------|
-
-    | Country    | Depending on resources, countries are specified as two ([ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2)) or three characters [ISO 3166-1 alpha-3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) |
-
-    | Date       | All date/time values are specified in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) ex: `2020-03-16T04:46:00+00:00`|
-
-    | Currency   | All currencies are specified as three characters ([ISO 4217](https://en.wikipedia.org/wiki/ISO_4217)) |
-
-    | Money      | decimal or string |
-
-
-    # Manage orders
-
-
-    | Method           | Endpoint                             | Description                                                                                                                                                                                                                               |
-
-    |------------------|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-
-    | GET, POST, PATCH | https://api.lengow.io/v3.0/orders/ | This endpoint allows you to retrieve and list your account orders (including the details of the order), mark the order with your internal order ID, perform actions on orders and check if they succeed. Each endpoint is detailed below. |
-
-
-    ## List of order statuses
-
-
-    From a Marketplace point of view, they all have their order statuses.
-
-    In Lengow, we regroup and standardize all these statuses in the `lengow_status`.
-
-
-    If you wish to filter based on the order status when retrieving orders, we advise you to rely on the `lengow_status` parameter.
-
-
-    | Status             | Allowed action       | Description                                                                                                                            |
-
-    |--------------------|----------------------|----------------------------------------------------------------------------------------------------------------------------------------|
-
-    | new                | None                 | Order was created but no action is available for now.                                                                                  |
-
-    | waiting_acceptance | accept, refuse       | The merchant has to accept or refuse the order. Automatic acceptance tool available on your Lengow account.                            |
-
-    | refused            | None                 | The order was refused by the merchant.                                                                                                 |
-
-    | accepted           | None                 | The order has been accepted by the merchant and waiting for the marketplace authorization for shipping.                                |
-
-    | waiting_shipment   | ship, cancel, refund | Depending on the marketplace the merchant can ship, cancel or refund the order.                                                        |
-
-    | shipped            | refund               | The order is waiting for the final marketplace validation for closing. Depending on the marketplace the merchant can refund the order. |
-
-    | closed             | None                 | The order is closed, no more actions are available.                                                                                    |
-
-    | canceled           | refund               | The order was canceled. Depending on the marketplace, the order can be refunded.                                                       |
-
-    | refunding          | None                 | The refund demand is waiting for the marketplace validation.                                                                           |
-
-    | refunded           | None                 | Like `closed` status, the order is closed and no more action are available.                                                            |
-
-    | partial_refunded   | None                 | Similar to `refunded`, but not all the lines have refunded status.                                                                     |
-
-    | pickup_to_prepare  | None                 | The merchant has to prepare the pickup. Specific to eBay                                                                               |
-
-    | to_pickup          | None                 | The order is ready for pickup. Specific to eBay                                                                                        |
-
-    | pickup_completed   | None                 | The order has been picked up by the buyer. Specific to eBay                                                                            |
-
-    | pickup_canceled    | None                 | The pickup has been cancelled. Specific to eBay                                                                                        |
-
-    | to_refund          | refund               | The merchant has to refund the order.                                                                                                  |
-
-
-
-    ## Orders Workflow
-
-
-    The Order retrieval and update process usually flows like this with Lengow REST API:
-
-
-    1. Order is placed on a marketplace
-
-    2. Order is retrieved from the marketplace by Lengow every 15 minutes
-
-    3. Merchants will retrieve orders that haven''t already been imported into their system. Refer to [get order endpoint](#tag/Orders/operation/Get%20Orders%20List) and the main filter to retrieve the order.
-
-    4. Once those orders have been imported into their system successfully, the merchant can mark them by setting the merchant order ID. Refer to [set merchant order ID endpoint](#tag/Orders/operation/Set%20Order%20Merchant%20ID).
-
-    5. Then Orders may be updated with 5 actions: Accept, Refuse, Ship, Cancel and Refund. Refers to [create an action on an order endpoint](#tag/Orders/operation/Order%20action).
-
-    Acceptation may be automated by activating automatic order acceptance on your Lengow [account](https://my.lengow.io/company/orders/acceptation).
-
-    To know which action is available by marketplace and which parameters are required for each action, refer to [get marketplace information endpoint](#tag/Marketplaces/operation/Get%20information%20on%20marketplaces).
-
-    7. Merchant can list all the actions on the orders and verify if they have been processed by the marketplace. Refer to [List all actions on orders endpoint](#tag/Orders/operation/Order%20action)
-
-
-
-    The diagram below provides a simplified representation of the Lengow order workflow. It does not consider the specificities of each marketplace. It would be best to analyse the statuses and possible actions for each of your marketplaces individually. [get marketplace information endpoint](#tag/Marketplaces/operation/Get%20information%20on%20marketplaces)
-
-
-    ![ORDER_WORKFLOW](/static/ORDER_WORKFLOW.png)'
+    Welcome to Lengow API documentation for Channel Execution solutions, including NetAmplify for Ads Feed Management and NetMarkets for Marketplace Management.'
   license:
     name: Proprietary
     url: http://my.lengow.io
@@ -150,9 +18,6 @@ info:
     altText: Lengow API
     backgroundColor: '#FFFFFF'
     url: /static/lengow_brand.png
-servers:
-- url: https://api.lengow.io
-  description: Production
 host: api.lengow.io
 basePath: /
 schemes: https
@@ -818,7 +683,7 @@ paths:
         This endpoint is under development and available only to approved beta participants.
 
 
-        Contact [our support](mailto:help@lengow.com).'
+        Contact our support.'
       operationId: list_catalogues_public_catalogues_get
       parameters:
       - description: The ID of the account
@@ -1554,7 +1419,7 @@ paths:
         This endpoint is under development and available only to approved beta participants.
 
 
-        Contact [our support](mailto:help@lengow.com).'
+        Contact our support.'
       operationId: get_catalogue_public_catalogues__catalogue_id__get
       parameters:
       - description: The ID of the catalogue to retrieve
@@ -2270,7 +2135,7 @@ paths:
         This endpoint is under development and available only to approved beta participants.
 
 
-        Contact [our support](mailto:help@lengow.com).'
+        Contact our support.'
       operationId: list_attributes_public_catalogues__catalogue_id__attributes_get
       parameters:
       - description: The ID of the catalogue
@@ -3003,7 +2868,7 @@ paths:
         This endpoint is under development and available only to approved beta participants.
 
 
-        Contact [our support](mailto:help@lengow.com).'
+        Contact our support.'
       operationId: delete_products_public_catalogues__catalogue_id__products_delete
       parameters:
       - description: The ID of the catalogue
@@ -3738,7 +3603,7 @@ paths:
         This endpoint is under development and available only to approved beta participants.
 
 
-        Contact [our support](mailto:help@lengow.com).'
+        Contact our support.'
       operationId: list_products_public_catalogues__catalogue_id__products_get
       parameters:
       - description: The ID of the catalogue
@@ -4477,7 +4342,7 @@ paths:
         This endpoint is under development and available only to approved beta participants.
 
 
-        Contact [our support](mailto:help@lengow.com).'
+        Contact our support.'
       operationId: update_products_public_catalogues__catalogue_id__products_patch
       parameters:
       - description: The ID of the catalogue
@@ -5216,7 +5081,7 @@ paths:
         This endpoint is under development and available only to approved beta participants.
 
 
-        Contact [our support](mailto:help@lengow.com).'
+        Contact our support.'
       operationId: upsert_products_public_catalogues__catalogue_id__products_post
       parameters:
       - description: The ID of the catalogue
@@ -5964,7 +5829,7 @@ paths:
         This endpoint is under development and available only to approved beta participants.
 
 
-        Contact [our support](mailto:help@lengow.com).'
+        Contact our support.'
       operationId: delete_product_public_catalogues__catalogue_id__products__product_id_value__delete
       parameters:
       - description: The ID of the catalogue
@@ -6697,7 +6562,7 @@ paths:
         This endpoint is under development and available only to approved beta participants.
 
 
-        Contact [our support](mailto:help@lengow.com).'
+        Contact our support.'
       operationId: get_product_public_catalogues__catalogue_id__products__product_id_value__get
       parameters:
       - description: The ID of the catalogue
@@ -7419,7 +7284,7 @@ paths:
         This endpoint is under development and available only to approved beta participants.
 
 
-        Contact [our support](mailto:help@lengow.com).'
+        Contact our support.'
       operationId: update_product_public_catalogues__catalogue_id__products__product_id_value__patch
       parameters:
       - description: The ID of the catalogue
@@ -7514,28 +7379,213 @@ paths:
       - Catalogues
 components:
   schemas:
-    UpsertProductsResponseItem:
+    RuleDuplicationAttributeResponse:
+      properties:
+        key:
+          description: The identifier of the attribute in the system
+          examples:
+          - price
+          - SRC_123456:quantity
+          title: Key
+          type: string
+        name:
+          description: The name of the attribute
+          examples:
+          - price
+          - quantity
+          title: Name
+          type: string
+        source:
+          description: The ID of the source this attribute is attached to
+          title: Source
+          type: integer
+      required:
+      - name
+      - key
+      - source
+      title: RuleDuplicationAttributeResponse
+      type: object
+    RuleDuplicationOperationEntryResponse:
       properties:
         errors:
           anyOf:
           - items:
-              type: string
+              $ref: '#/components/schemas/RuleDuplicationErrorResponse'
             type: array
           - type: 'null'
           title: Errors
-        product_id_value:
+        new_rule_id:
           anyOf:
-          - type: string
+          - type: integer
           - type: 'null'
-          title: Product Id Value
+          title: New Rule Id
+        source_catalogue_id:
+          title: Source Catalogue Id
+          type: integer
+        source_rule_id:
+          title: Source Rule Id
+          type: integer
+        success:
+          title: Success
+          type: boolean
+        target_catalogue_id:
+          title: Target Catalogue Id
+          type: integer
+        warnings:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/RuleDuplicationErrorResponse'
+            type: array
+          - type: 'null'
+          title: Warnings
+      required:
+      - source_rule_id
+      - source_catalogue_id
+      - target_catalogue_id
+      - success
+      title: RuleDuplicationOperationEntryResponse
+      type: object
+    ListCataloguesResponseItem-Input:
+      properties:
+        additional_sources:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Additional Sources
+        catalogue_id:
+          title: Catalogue Id
+          type: integer
+        channels_count:
+          title: Channels Count
+          type: integer
+        name:
+          title: Name
+          type: string
+        product_id_key:
+          title: Product Id Key
+          type: string
+        role:
+          title: Role
+          type: string
         status:
           title: Status
           type: string
+        used_by:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Used By
+      required:
+      - catalogue_id
+      - name
+      - status
+      - product_id_key
+      - role
+      - additional_sources
+      - used_by
+      - channels_count
+      title: ListCataloguesResponseItem
+      type: object
+    UpsertProductsRequest:
+      items:
+        additionalProperties:
+          anyOf:
+          - type: integer
+          - type: number
+          - type: string
+          - type: boolean
+          - type: 'null'
+        type: object
+      title: UpsertProductsRequest
+      type: array
+    ListCataloguesResponseItem-Output:
+      properties:
+        additional_sources:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Additional Sources
+        catalogue_id:
+          title: Catalogue Id
+          type: integer
+        channels_count:
+          title: Channels Count
+          type: integer
+        name:
+          title: Name
+          type: string
+        product_id_key:
+          title: Product Id Key
+          type: string
+        role:
+          title: Role
+          type: string
+        status:
+          title: Status
+          type: string
+        used_by:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Used By
+      required:
+      - catalogue_id
+      - name
+      - status
+      - product_id_key
+      - role
+      - channels_count
+      title: ListCataloguesResponseItem
+      type: object
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          title: Location
+          type: array
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+      type: object
+    ListProductsResponseItem:
+      properties:
+        attributes:
+          additionalProperties: true
+          title: Attributes
+          type: object
+        product_id_value:
+          title: Product Id Value
+          type: string
       required:
       - product_id_value
-      - status
-      - errors
-      title: UpsertProductsResponseItem
+      - attributes
+      title: ListProductsResponseItem
+      type: object
+    ListAttributesResponse:
+      $ref: '#/components/schemas/PaginatedResultWithNext_str_'
+      title: ListAttributesResponse
+    GetProductResponse:
+      additionalProperties: true
+      title: GetProductResponse
       type: object
     GetCatalogueResponse:
       properties:
@@ -7587,6 +7637,21 @@ components:
       - products_count
       title: GetCatalogueResponse
       type: object
+    UpdateProductRequest:
+      additionalProperties:
+        anyOf:
+        - type: integer
+        - type: number
+        - type: string
+        - type: boolean
+        - type: 'null'
+      title: UpdateProductRequest
+      type: object
+    UpdateProductsResponse:
+      additionalProperties:
+        $ref: '#/components/schemas/UpdateProductsResponseItem'
+      title: UpdateProductsResponse
+      type: object
     HTTPValidationError:
       properties:
         detail:
@@ -7596,58 +7661,6 @@ components:
           type: array
       title: HTTPValidationError
       type: object
-    GetProductResponse:
-      additionalProperties: true
-      title: GetProductResponse
-      type: object
-    DeleteProductResponse:
-      description: Response model for single product deletion.
-      properties:
-        product_id_value:
-          description: The ID of the deleted product
-          title: Product Id Value
-          type: string
-        status:
-          description: The deletion status
-          title: Status
-          type: string
-      required:
-      - product_id_value
-      - status
-      title: DeleteProductResponse
-      type: object
-    PaginatedResultWithNext_str_:
-      properties:
-        data:
-          items:
-            type: string
-          title: Data
-          type: array
-        limit:
-          title: Limit
-          type: integer
-        next:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Next
-        page:
-          title: Page
-          type: integer
-        total:
-          title: Total
-          type: integer
-      required:
-      - data
-      - total
-      - page
-      - limit
-      - next
-      title: PaginatedResultWithNext[str]
-      type: object
-    ListAttributesResponse:
-      $ref: '#/components/schemas/PaginatedResultWithNext_str_'
-      title: ListAttributesResponse
     RuleDuplicationErrorResponse:
       properties:
         attribute:
@@ -7688,68 +7701,6 @@ components:
       - message
       title: RuleDuplicationErrorResponse
       type: object
-    UpdateProductsRequest:
-      additionalProperties:
-        $ref: '#/components/schemas/UpdateProductsRequestItem'
-      title: UpdateProductsRequest
-      type: object
-    ListProductsResponse:
-      $ref: '#/components/schemas/PaginatedResultWithNext_ListProductsResponseItem_'
-      title: ListProductsResponse
-    DeleteProductsResponseItem:
-      description: Response item for a single product deletion.
-      properties:
-        product_id_value:
-          title: Product Id Value
-          type: string
-        status:
-          title: Status
-          type: string
-      required:
-      - product_id_value
-      - status
-      title: DeleteProductsResponseItem
-      type: object
-    RuleDuplicationOperationEntryResponse:
-      properties:
-        errors:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/RuleDuplicationErrorResponse'
-            type: array
-          - type: 'null'
-          title: Errors
-        new_rule_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: New Rule Id
-        source_catalogue_id:
-          title: Source Catalogue Id
-          type: integer
-        source_rule_id:
-          title: Source Rule Id
-          type: integer
-        success:
-          title: Success
-          type: boolean
-        target_catalogue_id:
-          title: Target Catalogue Id
-          type: integer
-        warnings:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/RuleDuplicationErrorResponse'
-            type: array
-          - type: 'null'
-          title: Warnings
-      required:
-      - source_rule_id
-      - source_catalogue_id
-      - target_catalogue_id
-      - success
-      title: RuleDuplicationOperationEntryResponse
-      type: object
     PaginatedResultWithNext_ListCataloguesResponseItem_-Output:
       properties:
         data:
@@ -7779,76 +7730,59 @@ components:
       - next
       title: PaginatedResultWithNext[ListCataloguesResponseItem]
       type: object
-    UpdateProductsRequestItem:
+    UpsertProductsResponse:
+      items:
+        $ref: '#/components/schemas/UpsertProductsResponseItem'
+      title: UpsertProductsResponse
+      type: array
+    UpdateProductsRequest:
       additionalProperties:
-        anyOf:
-        - type: integer
-        - type: number
-        - type: string
-        - type: boolean
-        - type: 'null'
-      title: UpdateProductsRequestItem
+        $ref: '#/components/schemas/UpdateProductsRequestItem'
+      title: UpdateProductsRequest
       type: object
-    ListCataloguesResponse:
-      $ref: '#/components/schemas/PaginatedResultWithNext_ListCataloguesResponseItem_-Output'
-      title: ListCataloguesResponse
+    ListProductsResponse:
+      $ref: '#/components/schemas/PaginatedResultWithNext_ListProductsResponseItem_'
+      title: ListProductsResponse
     UpdateProductResponse:
       title: UpdateProductResponse
-    UpdateProductsResponse:
-      additionalProperties:
-        $ref: '#/components/schemas/UpdateProductsResponseItem'
-      title: UpdateProductsResponse
-      type: object
-    DeleteProductsResponse:
-      description: Response model for deleting multiple products.
-      items:
-        $ref: '#/components/schemas/DeleteProductsResponseItem'
-      title: DeleteProductsResponse
-      type: array
-    ListCataloguesResponseItem-Input:
+    DeleteProductResponse:
+      description: Response model for single product deletion.
       properties:
-        additional_sources:
+        product_id_value:
+          description: The ID of the deleted product
+          title: Product Id Value
+          type: string
+        status:
+          description: The deletion status
+          title: Status
+          type: string
+      required:
+      - product_id_value
+      - status
+      title: DeleteProductResponse
+      type: object
+    UpsertProductsResponseItem:
+      properties:
+        errors:
           anyOf:
           - items:
-              type: integer
+              type: string
             type: array
           - type: 'null'
-          title: Additional Sources
-        catalogue_id:
-          title: Catalogue Id
-          type: integer
-        channels_count:
-          title: Channels Count
-          type: integer
-        name:
-          title: Name
-          type: string
-        product_id_key:
-          title: Product Id Key
-          type: string
-        role:
-          title: Role
-          type: string
+          title: Errors
+        product_id_value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Product Id Value
         status:
           title: Status
           type: string
-        used_by:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Used By
       required:
-      - catalogue_id
-      - name
+      - product_id_value
       - status
-      - product_id_key
-      - role
-      - additional_sources
-      - used_by
-      - channels_count
-      title: ListCataloguesResponseItem
+      - errors
+      title: UpsertProductsResponseItem
       type: object
     UpdateProductsResponseItem:
       properties:
@@ -7866,93 +7800,53 @@ components:
       - status
       title: UpdateProductsResponseItem
       type: object
-    ListCataloguesResponseItem-Output:
+    PaginatedResultWithNext_str_:
       properties:
-        additional_sources:
+        data:
+          items:
+            type: string
+          title: Data
+          type: array
+        limit:
+          title: Limit
+          type: integer
+        next:
           anyOf:
-          - items:
-              type: integer
-            type: array
+          - type: string
           - type: 'null'
-          title: Additional Sources
-        catalogue_id:
-          title: Catalogue Id
+          title: Next
+        page:
+          title: Page
           type: integer
-        channels_count:
-          title: Channels Count
+        total:
+          title: Total
           type: integer
-        name:
-          title: Name
-          type: string
-        product_id_key:
-          title: Product Id Key
-          type: string
-        role:
-          title: Role
+      required:
+      - data
+      - total
+      - page
+      - limit
+      - next
+      title: PaginatedResultWithNext[str]
+      type: object
+    ListCataloguesResponse:
+      $ref: '#/components/schemas/PaginatedResultWithNext_ListCataloguesResponseItem_-Output'
+      title: ListCataloguesResponse
+    DeleteProductsResponseItem:
+      description: Response item for a single product deletion.
+      properties:
+        product_id_value:
+          title: Product Id Value
           type: string
         status:
           title: Status
           type: string
-        used_by:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Used By
       required:
-      - catalogue_id
-      - name
+      - product_id_value
       - status
-      - product_id_key
-      - role
-      - channels_count
-      title: ListCataloguesResponseItem
+      title: DeleteProductsResponseItem
       type: object
-    UpsertProductsResponse:
-      items:
-        $ref: '#/components/schemas/UpsertProductsResponseItem'
-      title: UpsertProductsResponse
-      type: array
-    UpsertProductsRequest:
-      items:
-        additionalProperties:
-          anyOf:
-          - type: integer
-          - type: number
-          - type: string
-          - type: boolean
-          - type: 'null'
-        type: object
-      title: UpsertProductsRequest
-      type: array
-    RuleDuplicationAttributeResponse:
-      properties:
-        key:
-          description: The identifier of the attribute in the system
-          examples:
-          - price
-          - SRC_123456:quantity
-          title: Key
-          type: string
-        name:
-          description: The name of the attribute
-          examples:
-          - price
-          - quantity
-          title: Name
-          type: string
-        source:
-          description: The ID of the source this attribute is attached to
-          title: Source
-          type: integer
-      required:
-      - name
-      - key
-      - source
-      title: RuleDuplicationAttributeResponse
-      type: object
-    UpdateProductRequest:
+    UpdateProductsRequestItem:
       additionalProperties:
         anyOf:
         - type: integer
@@ -7960,21 +7854,7 @@ components:
         - type: string
         - type: boolean
         - type: 'null'
-      title: UpdateProductRequest
-      type: object
-    ListProductsResponseItem:
-      properties:
-        attributes:
-          additionalProperties: true
-          title: Attributes
-          type: object
-        product_id_value:
-          title: Product Id Value
-          type: string
-      required:
-      - product_id_value
-      - attributes
-      title: ListProductsResponseItem
+      title: UpdateProductsRequestItem
       type: object
     PaginatedResultWithNext_ListProductsResponseItem_:
       properties:
@@ -8005,27 +7885,12 @@ components:
       - next
       title: PaginatedResultWithNext[ListProductsResponseItem]
       type: object
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          title: Location
-          type: array
-        msg:
-          title: Message
-          type: string
-        type:
-          title: Error Type
-          type: string
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-      type: object
+    DeleteProductsResponse:
+      description: Response model for deleting multiple products.
+      items:
+        $ref: '#/components/schemas/DeleteProductsResponseItem'
+      title: DeleteProductsResponse
+      type: array
   responses:
     TooManyRequests:
       content:

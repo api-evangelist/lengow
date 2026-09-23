@@ -1,0 +1,32 @@
+{
+  "provider": "lengow",
+  "sources": [
+    "_original/lengow-channel-execution-openapi.json"
+  ],
+  "outputs": [
+    "lengow-authentication-api-openapi.yml",
+    "lengow-catalogues-api-openapi.yml",
+    "lengow-marketplaces-api-openapi.yml",
+    "lengow-rate-limits-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "1 archived document(s) dropped as subsets of other archived documents",
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "lengow-channel-execution-openapi.json: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "lengow-channel-execution-openapi.json: declared missing tag: Authentication",
+    "lengow-channel-execution-openapi.json: declared missing tag: Catalogues",
+    "lengow-channel-execution-openapi.json: declared missing tag: Marketplaces",
+    "lengow-channel-execution-openapi.json: declared missing tag: Rate limits",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "_original/lengow-channel-execution-openapi.yml: archived document superseded by a larger archived document",
+    "lengow-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lengow-catalogues-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lengow-marketplaces-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lengow-rate-limits-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}
