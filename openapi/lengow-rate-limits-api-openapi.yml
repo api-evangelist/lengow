@@ -31,7 +31,7 @@ paths:
 
 
         This authenticated endpoint returns every API route available to the current login and its configured fixed-window quota. `remaining_credit` is the current Redis bucket value, clamped to zero after exhaustion. `remaining_time` is expressed in seconds. Both remaining fields are `null` when rate limiting is disabled for a route.'
-      operationId: Get Rate Limits
+      operationId: GetRateLimits
       produces:
       - application/json
       responses:
@@ -94,6 +94,8 @@ paths:
       - Rate Limits
       summary: Get rate limits
       x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: Get Rate Limits
 components:
   securitySchemes:
     bearerAuth:

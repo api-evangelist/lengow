@@ -46,7 +46,7 @@ paths:
 
 
         To check the remaining validity time of a token, you can use the `/me` API.'
-      operationId: Get Authentication Token
+      operationId: GetAuthenticationToken
       parameters:
       - in: body
         name: access_token
@@ -79,6 +79,8 @@ paths:
       - Authentication
       summary: Get authentication token
       x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: Get Authentication Token
   /me:
     get:
       description: '`/me`
@@ -88,7 +90,7 @@ paths:
 
 
         It shows the expiration date of the current session token.'
-      operationId: Get Current Session
+      operationId: GetCurrentSession
       produces:
       - application/json
       responses:
@@ -113,6 +115,8 @@ paths:
       - Authentication
       summary: Get current session
       x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: Get Current Session
 components:
   securitySchemes:
     bearerAuth:
