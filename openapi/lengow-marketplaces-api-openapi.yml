@@ -548,17 +548,13 @@ paths:
       x-operation-id-original: Get product reports
 components:
   schemas:
-    SeverityResponse:
+    LineWarningCount:
       properties:
-        nb_instances:
-          description: Number of this severity events
-          type: integer
-        nb_products_impacted:
-          description: Number of products related to this severity event
+        count:
+          description: Number of lines with warning.
           type: integer
       required:
-      - nb_instances
-      - nb_products_impacted
+      - count
       type: object
     DigestV2Reports:
       properties:
@@ -570,12 +566,84 @@ components:
       - offers
       - products
       type: object
-    ErrorAttribute:
+    DigestReportProductsEntry:
       properties:
-        name:
-          type: string
+        delta_product_healthy_rate:
+          description: Rate delta for healthy products since previous synchronization.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        delta_products_in_error_rate:
+          description: Rate delta for products in error since previous synchronization.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        delta_products_in_feed_rate:
+          description: Rate of change for products in feed since previous synchronization.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        delta_products_with_warning_rate:
+          description: Rate delta for products with warning since previous synchronization.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        last_report_date:
+          description: Last received report date for this report type.
+          type:
+          - string
+          - 'null'
+        products_healthy:
+          description: Number of healthy products.
+          type:
+          - integer
+          - 'null'
+        products_healthy_rate:
+          description: Rate of healthy products.
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type:
+          - string
+          - 'null'
+        products_in_error:
+          description: Number of products in error.
+          type:
+          - integer
+          - 'null'
+        products_in_feed:
+          description: Total number of products in the feed.
+          type:
+          - integer
+          - 'null'
+        products_with_warning:
+          description: Number of products with warning.
+          type:
+          - integer
+          - 'null'
+        timestamp:
+          description: 'Report timestamp. Example: "2019-12-24 21:03:00"'
+          type:
+          - string
+          - 'null'
       required:
-      - name
+      - delta_product_healthy_rate
+      - delta_products_in_error_rate
+      - delta_products_in_feed_rate
+      - delta_products_with_warning_rate
+      - products_healthy
+      - products_healthy_rate
+      - products_in_error
+      - products_in_feed
+      - products_with_warning
+      - timestamp
       type: object
     ProductsPublished:
       properties:
@@ -588,34 +656,6 @@ components:
       required:
       - count
       - percentage
-      type: object
-    ShardStatus:
-      properties:
-        key:
-          description: Shard key
-          type: integer
-        ready:
-          description: False if the data is being migrated across servers
-          type: boolean
-      required:
-      - key
-      - ready
-      type: object
-    LineWarningCount:
-      properties:
-        count:
-          description: Number of lines with warning.
-          type: integer
-      required:
-      - count
-      type: object
-    LineErrorCount:
-      properties:
-        count:
-          description: Number of lines in error.
-          type: integer
-      required:
-      - count
       type: object
     Product:
       properties:
@@ -650,6 +690,128 @@ components:
       - product_id
       - task_id
       - updated_at
+      type: object
+    Measures:
+      properties:
+        instances_in_error:
+          $ref: '#/components/schemas/LineErrorCount'
+        instances_with_warning:
+          $ref: '#/components/schemas/LineWarningCount'
+        products_in_error:
+          $ref: '#/components/schemas/ProductsErrorCount'
+        products_in_feed:
+          $ref: '#/components/schemas/ProductsSent'
+        products_published:
+          allOf:
+          - $ref: '#/components/schemas/ProductsPublished'
+          description: Number of products actually published.
+        products_with_warning:
+          $ref: '#/components/schemas/ProductsErrorCount'
+      required:
+      - instances_in_error
+      - instances_with_warning
+      - products_in_error
+      - products_in_feed
+      - products_published
+      - products_with_warning
+      type: object
+    ShardStatus:
+      properties:
+        key:
+          description: Shard key
+          type: integer
+        ready:
+          description: False if the data is being migrated across servers
+          type: boolean
+      required:
+      - key
+      - ready
+      type: object
+    ProductsErrorCount:
+      properties:
+        count:
+          description: Number of products in error.
+          type: integer
+      required:
+      - count
+      type: object
+    ErrorAttribute:
+      properties:
+        name:
+          type: string
+      required:
+      - name
+      type: object
+    SeverityResponse:
+      properties:
+        nb_instances:
+          description: Number of this severity events
+          type: integer
+        nb_products_impacted:
+          description: Number of products related to this severity event
+          type: integer
+      required:
+      - nb_instances
+      - nb_products_impacted
+      type: object
+    ErrorIndicator:
+      properties:
+        count:
+          type: integer
+        type:
+          type: string
+      required:
+      - count
+      - type
+      type: object
+    Error:
+      properties:
+        attribute:
+          $ref: '#/components/schemas/ErrorAttribute'
+        code:
+          type: string
+        error_id:
+          type: integer
+        header_slug:
+          type: string
+        impacted_line_id:
+          type: integer
+        indicator:
+          $ref: '#/components/schemas/ErrorIndicator'
+        message:
+          type: string
+        severity:
+          type:
+          - string
+          - 'null'
+      required:
+      - attribute
+      - code
+      - error_id
+      - header_slug
+      - impacted_line_id
+      - indicator
+      - message
+      type: object
+    DatabaseStatus:
+      properties:
+        host:
+          description: Database server host
+          type: string
+        name:
+          description: Database name
+          type: string
+      required:
+      - host
+      - name
+      type: object
+    LineErrorCount:
+      properties:
+        count:
+          description: Number of lines in error.
+          type: integer
+      required:
+      - count
       type: object
     DigestReportOffersEntry:
       properties:
@@ -742,144 +904,6 @@ components:
       - error_types
       - severity_levels
       type: object
-    ProductsErrorCount:
-      properties:
-        count:
-          description: Number of products in error.
-          type: integer
-      required:
-      - count
-      type: object
-    DatabaseStatus:
-      properties:
-        host:
-          description: Database server host
-          type: string
-        name:
-          description: Database name
-          type: string
-      required:
-      - host
-      - name
-      type: object
-    DigestReportProductsEntry:
-      properties:
-        delta_product_healthy_rate:
-          description: Rate delta for healthy products since previous synchronization.
-          format: decimal
-          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
-          type:
-          - string
-          - 'null'
-        delta_products_in_error_rate:
-          description: Rate delta for products in error since previous synchronization.
-          format: decimal
-          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
-          type:
-          - string
-          - 'null'
-        delta_products_in_feed_rate:
-          description: Rate of change for products in feed since previous synchronization.
-          format: decimal
-          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
-          type:
-          - string
-          - 'null'
-        delta_products_with_warning_rate:
-          description: Rate delta for products with warning since previous synchronization.
-          format: decimal
-          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
-          type:
-          - string
-          - 'null'
-        last_report_date:
-          description: Last received report date for this report type.
-          type:
-          - string
-          - 'null'
-        products_healthy:
-          description: Number of healthy products.
-          type:
-          - integer
-          - 'null'
-        products_healthy_rate:
-          description: Rate of healthy products.
-          format: decimal
-          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
-          type:
-          - string
-          - 'null'
-        products_in_error:
-          description: Number of products in error.
-          type:
-          - integer
-          - 'null'
-        products_in_feed:
-          description: Total number of products in the feed.
-          type:
-          - integer
-          - 'null'
-        products_with_warning:
-          description: Number of products with warning.
-          type:
-          - integer
-          - 'null'
-        timestamp:
-          description: 'Report timestamp. Example: "2019-12-24 21:03:00"'
-          type:
-          - string
-          - 'null'
-      required:
-      - delta_product_healthy_rate
-      - delta_products_in_error_rate
-      - delta_products_in_feed_rate
-      - delta_products_with_warning_rate
-      - products_healthy
-      - products_healthy_rate
-      - products_in_error
-      - products_in_feed
-      - products_with_warning
-      - timestamp
-      type: object
-    Error:
-      properties:
-        attribute:
-          $ref: '#/components/schemas/ErrorAttribute'
-        code:
-          type: string
-        error_id:
-          type: integer
-        header_slug:
-          type: string
-        impacted_line_id:
-          type: integer
-        indicator:
-          $ref: '#/components/schemas/ErrorIndicator'
-        message:
-          type: string
-        severity:
-          type:
-          - string
-          - 'null'
-      required:
-      - attribute
-      - code
-      - error_id
-      - header_slug
-      - impacted_line_id
-      - indicator
-      - message
-      type: object
-    ErrorIndicator:
-      properties:
-        count:
-          type: integer
-        type:
-          type: string
-      required:
-      - count
-      - type
-      type: object
     ProductsSent:
       properties:
         count:
@@ -891,30 +915,6 @@ components:
       required:
       - count
       - percentage
-      type: object
-    Measures:
-      properties:
-        instances_in_error:
-          $ref: '#/components/schemas/LineErrorCount'
-        instances_with_warning:
-          $ref: '#/components/schemas/LineWarningCount'
-        products_in_error:
-          $ref: '#/components/schemas/ProductsErrorCount'
-        products_in_feed:
-          $ref: '#/components/schemas/ProductsSent'
-        products_published:
-          allOf:
-          - $ref: '#/components/schemas/ProductsPublished'
-          description: Number of products actually published.
-        products_with_warning:
-          $ref: '#/components/schemas/ProductsErrorCount'
-      required:
-      - instances_in_error
-      - instances_with_warning
-      - products_in_error
-      - products_in_feed
-      - products_published
-      - products_with_warning
       type: object
   responses:
     TooManyRequests:
