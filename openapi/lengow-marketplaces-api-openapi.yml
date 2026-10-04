@@ -547,14 +547,33 @@ paths:
       x-operation-id-source: normalized
       x-operation-id-original: Get product reports
 components:
+  responses:
+    TooManyRequests:
+      content:
+        application/json:
+          example:
+            error:
+              code: 429
+              message: 'Request limitation: 500 reached on /v3.0/orders'
+      description: The middleware rate-limit bucket is exhausted
+      headers:
+        Retry-After:
+          description: Seconds until the current fixed window expires
+          schema:
+            minimum: 0
+            type: integer
   schemas:
-    LineWarningCount:
+    DatabaseStatus:
       properties:
-        count:
-          description: Number of lines with warning.
-          type: integer
+        host:
+          description: Database server host
+          type: string
+        name:
+          description: Database name
+          type: string
       required:
-      - count
+      - host
+      - name
       type: object
     DigestV2Reports:
       properties:
@@ -565,6 +584,57 @@ components:
       required:
       - offers
       - products
+      type: object
+    ErrorAttribute:
+      properties:
+        name:
+          type: string
+      required:
+      - name
+      type: object
+    LineWarningCount:
+      properties:
+        count:
+          description: Number of lines with warning.
+          type: integer
+      required:
+      - count
+      type: object
+    ProductsPublished:
+      properties:
+        count:
+          description: Number of products actually published.
+          type: integer
+        percentage:
+          description: Percentage of products actually published.
+          type: integer
+      required:
+      - count
+      - percentage
+      type: object
+    AvailableFilters:
+      properties:
+        error_types:
+          description: List of types that can be used to filter errors. Only types with at least one error are returned.
+          type: array
+        severity_levels:
+          description: "List of types that can be\n    used to filter errors. Only types with at least one error are returned."
+          type: array
+      required:
+      - error_types
+      - severity_levels
+      type: object
+    ProductsSent:
+      properties:
+        count:
+          description: Number of products sent to the channel.
+          type: integer
+        percentage:
+          description: Percentage of products sent to the channel.
+          type: integer
+      required:
+      - count
+      - percentage
       type: object
     DigestReportProductsEntry:
       properties:
@@ -645,17 +715,60 @@ components:
       - products_with_warning
       - timestamp
       type: object
-    ProductsPublished:
+    ErrorIndicator:
       properties:
         count:
-          description: Number of products actually published.
           type: integer
-        percentage:
-          description: Percentage of products actually published.
+        type:
+          type: string
+      required:
+      - count
+      - type
+      type: object
+    LineErrorCount:
+      properties:
+        count:
+          description: Number of lines in error.
           type: integer
       required:
       - count
-      - percentage
+      type: object
+    Error:
+      properties:
+        attribute:
+          $ref: '#/components/schemas/ErrorAttribute'
+        code:
+          type: string
+        error_id:
+          type: integer
+        header_slug:
+          type: string
+        impacted_line_id:
+          type: integer
+        indicator:
+          $ref: '#/components/schemas/ErrorIndicator'
+        message:
+          type: string
+        severity:
+          type:
+          - string
+          - 'null'
+      required:
+      - attribute
+      - code
+      - error_id
+      - header_slug
+      - impacted_line_id
+      - indicator
+      - message
+      type: object
+    ProductsErrorCount:
+      properties:
+        count:
+          description: Number of products in error.
+          type: integer
+      required:
+      - count
       type: object
     Product:
       properties:
@@ -714,104 +827,6 @@ components:
       - products_in_feed
       - products_published
       - products_with_warning
-      type: object
-    ShardStatus:
-      properties:
-        key:
-          description: Shard key
-          type: integer
-        ready:
-          description: False if the data is being migrated across servers
-          type: boolean
-      required:
-      - key
-      - ready
-      type: object
-    ProductsErrorCount:
-      properties:
-        count:
-          description: Number of products in error.
-          type: integer
-      required:
-      - count
-      type: object
-    ErrorAttribute:
-      properties:
-        name:
-          type: string
-      required:
-      - name
-      type: object
-    SeverityResponse:
-      properties:
-        nb_instances:
-          description: Number of this severity events
-          type: integer
-        nb_products_impacted:
-          description: Number of products related to this severity event
-          type: integer
-      required:
-      - nb_instances
-      - nb_products_impacted
-      type: object
-    ErrorIndicator:
-      properties:
-        count:
-          type: integer
-        type:
-          type: string
-      required:
-      - count
-      - type
-      type: object
-    Error:
-      properties:
-        attribute:
-          $ref: '#/components/schemas/ErrorAttribute'
-        code:
-          type: string
-        error_id:
-          type: integer
-        header_slug:
-          type: string
-        impacted_line_id:
-          type: integer
-        indicator:
-          $ref: '#/components/schemas/ErrorIndicator'
-        message:
-          type: string
-        severity:
-          type:
-          - string
-          - 'null'
-      required:
-      - attribute
-      - code
-      - error_id
-      - header_slug
-      - impacted_line_id
-      - indicator
-      - message
-      type: object
-    DatabaseStatus:
-      properties:
-        host:
-          description: Database server host
-          type: string
-        name:
-          description: Database name
-          type: string
-      required:
-      - host
-      - name
-      type: object
-    LineErrorCount:
-      properties:
-        count:
-          description: Number of lines in error.
-          type: integer
-      required:
-      - count
       type: object
     DigestReportOffersEntry:
       properties:
@@ -892,45 +907,30 @@ components:
       - products_with_warning
       - timestamp
       type: object
-    AvailableFilters:
+    ShardStatus:
       properties:
-        error_types:
-          description: List of types that can be used to filter errors. Only types with at least one error are returned.
-          type: array
-        severity_levels:
-          description: "List of types that can be\n    used to filter errors. Only types with at least one error are returned."
-          type: array
+        key:
+          description: Shard key
+          type: integer
+        ready:
+          description: False if the data is being migrated across servers
+          type: boolean
       required:
-      - error_types
-      - severity_levels
+      - key
+      - ready
       type: object
-    ProductsSent:
+    SeverityResponse:
       properties:
-        count:
-          description: Number of products sent to the channel.
+        nb_instances:
+          description: Number of this severity events
           type: integer
-        percentage:
-          description: Percentage of products sent to the channel.
+        nb_products_impacted:
+          description: Number of products related to this severity event
           type: integer
       required:
-      - count
-      - percentage
+      - nb_instances
+      - nb_products_impacted
       type: object
-  responses:
-    TooManyRequests:
-      content:
-        application/json:
-          example:
-            error:
-              code: 429
-              message: 'Request limitation: 500 reached on /v3.0/orders'
-      description: The middleware rate-limit bucket is exhausted
-      headers:
-        Retry-After:
-          description: Seconds until the current fixed window expires
-          schema:
-            minimum: 0
-            type: integer
   securitySchemes:
     bearerAuth:
       scheme: bearer

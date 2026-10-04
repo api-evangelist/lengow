@@ -7378,23 +7378,90 @@ paths:
       tags:
       - Catalogues
 components:
+  responses:
+    TooManyRequests:
+      content:
+        application/json:
+          example:
+            error:
+              code: 429
+              message: 'Request limitation: 500 reached on /v3.0/orders'
+      description: The middleware rate-limit bucket is exhausted
+      headers:
+        Retry-After:
+          description: Seconds until the current fixed window expires
+          schema:
+            minimum: 0
+            type: integer
   schemas:
-    DeleteProductsResponseItem:
-      description: Response item for a single product deletion.
+    ListProductsResponseItem:
       properties:
+        attributes:
+          additionalProperties: true
+          title: Attributes
+          type: object
         product_id_value:
           title: Product Id Value
           type: string
-        status:
-          title: Status
-          type: string
       required:
       - product_id_value
-      - status
-      title: DeleteProductsResponseItem
+      - attributes
+      title: ListProductsResponseItem
       type: object
-    UpdateProductResponse:
-      title: UpdateProductResponse
+    PaginatedResultWithNext_ListProductsResponseItem_:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/ListProductsResponseItem'
+          title: Data
+          type: array
+        limit:
+          title: Limit
+          type: integer
+        next:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next
+        page:
+          title: Page
+          type: integer
+        total:
+          title: Total
+          type: integer
+      required:
+      - data
+      - total
+      - page
+      - limit
+      - next
+      title: PaginatedResultWithNext[ListProductsResponseItem]
+      type: object
+    ListProductsResponse:
+      $ref: '#/components/schemas/PaginatedResultWithNext_ListProductsResponseItem_'
+      title: ListProductsResponse
+    UpsertProductsRequest:
+      items:
+        additionalProperties:
+          anyOf:
+          - type: integer
+          - type: number
+          - type: string
+          - type: boolean
+          - type: 'null'
+        type: object
+      title: UpsertProductsRequest
+      type: array
+    UpdateProductsRequestItem:
+      additionalProperties:
+        anyOf:
+        - type: integer
+        - type: number
+        - type: string
+        - type: boolean
+        - type: 'null'
+      title: UpdateProductsRequestItem
+      type: object
     UpdateProductsResponseItem:
       properties:
         errors:
@@ -7411,45 +7478,97 @@ components:
       - status
       title: UpdateProductsResponseItem
       type: object
-    RuleDuplicationErrorResponse:
+    UpsertProductsResponseItem:
       properties:
-        attribute:
-          anyOf:
-          - $ref: '#/components/schemas/RuleDuplicationAttributeResponse'
-          - type: 'null'
-          description: The attribute related to the error, if applicable
-        attributes:
+        errors:
           anyOf:
           - items:
-              $ref: '#/components/schemas/RuleDuplicationAttributeResponse'
+              type: string
             type: array
           - type: 'null'
-          description: The list of attributes related to the error, if applicable
-          title: Attributes
-        error_code:
-          description: The error code identifying the type of duplication error
-          enum:
-          - rule_duplication.self_duplication
-          - rule_duplication.source_rule.not_found
-          - rule_duplication.validity_period
-          - rule_duplication.referenced_attributes.not_found
-          - rule_duplication.target_attribute.duplicate_new_on_not_new
-          - rule_duplication.target_attribute.duplicate_not_new_on_new
-          - rule_duplication.target_attribute.not_found
-          - rule_duplication.target_attribute.default_rule.already_exists
-          - rule_duplication.target_attribute.default_rule.already_duplicated
-          - rule_duplication.unknown_error
-          - catalogue.not_found
-          title: Error Code
-          type: string
-        message:
-          description: A human-readable message describing the error
-          title: Message
+          title: Errors
+        product_id_value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Product Id Value
+        status:
+          title: Status
           type: string
       required:
-      - error_code
-      - message
-      title: RuleDuplicationErrorResponse
+      - product_id_value
+      - status
+      - errors
+      title: UpsertProductsResponseItem
+      type: object
+    UpdateProductsResponse:
+      additionalProperties:
+        $ref: '#/components/schemas/UpdateProductsResponseItem'
+      title: UpdateProductsResponse
+      type: object
+    UpdateProductRequest:
+      additionalProperties:
+        anyOf:
+        - type: integer
+        - type: number
+        - type: string
+        - type: boolean
+        - type: 'null'
+      title: UpdateProductRequest
+      type: object
+    DeleteProductsResponseItem:
+      description: Response item for a single product deletion.
+      properties:
+        product_id_value:
+          title: Product Id Value
+          type: string
+        status:
+          title: Status
+          type: string
+      required:
+      - product_id_value
+      - status
+      title: DeleteProductsResponseItem
+      type: object
+    RuleDuplicationOperationEntryResponse:
+      properties:
+        errors:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/RuleDuplicationErrorResponse'
+            type: array
+          - type: 'null'
+          title: Errors
+        new_rule_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: New Rule Id
+        source_catalogue_id:
+          title: Source Catalogue Id
+          type: integer
+        source_rule_id:
+          title: Source Rule Id
+          type: integer
+        success:
+          title: Success
+          type: boolean
+        target_catalogue_id:
+          title: Target Catalogue Id
+          type: integer
+        warnings:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/RuleDuplicationErrorResponse'
+            type: array
+          - type: 'null'
+          title: Warnings
+      required:
+      - source_rule_id
+      - source_catalogue_id
+      - target_catalogue_id
+      - success
+      title: RuleDuplicationOperationEntryResponse
       type: object
     PaginatedResultWithNext_ListCataloguesResponseItem_-Output:
       properties:
@@ -7480,12 +7599,132 @@ components:
       - next
       title: PaginatedResultWithNext[ListCataloguesResponseItem]
       type: object
-    DeleteProductsResponse:
-      description: Response model for deleting multiple products.
+    DeleteProductResponse:
+      description: Response model for single product deletion.
+      properties:
+        product_id_value:
+          description: The ID of the deleted product
+          title: Product Id Value
+          type: string
+        status:
+          description: The deletion status
+          title: Status
+          type: string
+      required:
+      - product_id_value
+      - status
+      title: DeleteProductResponse
+      type: object
+    GetProductResponse:
+      additionalProperties: true
+      title: GetProductResponse
+      type: object
+    UpsertProductsResponse:
       items:
-        $ref: '#/components/schemas/DeleteProductsResponseItem'
-      title: DeleteProductsResponse
+        $ref: '#/components/schemas/UpsertProductsResponseItem'
+      title: UpsertProductsResponse
       type: array
+    ListAttributesResponse:
+      $ref: '#/components/schemas/PaginatedResultWithNext_str_'
+      title: ListAttributesResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          title: Location
+          type: array
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+      type: object
+    PaginatedResultWithNext_str_:
+      properties:
+        data:
+          items:
+            type: string
+          title: Data
+          type: array
+        limit:
+          title: Limit
+          type: integer
+        next:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next
+        page:
+          title: Page
+          type: integer
+        total:
+          title: Total
+          type: integer
+      required:
+      - data
+      - total
+      - page
+      - limit
+      - next
+      title: PaginatedResultWithNext[str]
+      type: object
+    ListCataloguesResponseItem-Input:
+      properties:
+        additional_sources:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Additional Sources
+        catalogue_id:
+          title: Catalogue Id
+          type: integer
+        channels_count:
+          title: Channels Count
+          type: integer
+        name:
+          title: Name
+          type: string
+        product_id_key:
+          title: Product Id Key
+          type: string
+        role:
+          title: Role
+          type: string
+        status:
+          title: Status
+          type: string
+        used_by:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Used By
+      required:
+      - catalogue_id
+      - name
+      - status
+      - product_id_key
+      - role
+      - additional_sources
+      - used_by
+      - channels_count
+      title: ListCataloguesResponseItem
+      type: object
+    ListCataloguesResponse:
+      $ref: '#/components/schemas/PaginatedResultWithNext_ListCataloguesResponseItem_-Output'
+      title: ListCataloguesResponse
     GetCatalogueResponse:
       properties:
         additional_sources:
@@ -7536,48 +7775,60 @@ components:
       - products_count
       title: GetCatalogueResponse
       type: object
-    ListProductsResponse:
-      $ref: '#/components/schemas/PaginatedResultWithNext_ListProductsResponseItem_'
-      title: ListProductsResponse
-    GetProductResponse:
-      additionalProperties: true
-      title: GetProductResponse
-      type: object
-    ValidationError:
+    HTTPValidationError:
       properties:
-        loc:
+        detail:
           items:
-            anyOf:
-            - type: string
-            - type: integer
-          title: Location
+            $ref: '#/components/schemas/ValidationError'
+          title: Detail
           type: array
-        msg:
+      title: HTTPValidationError
+      type: object
+    DeleteProductsResponse:
+      description: Response model for deleting multiple products.
+      items:
+        $ref: '#/components/schemas/DeleteProductsResponseItem'
+      title: DeleteProductsResponse
+      type: array
+    RuleDuplicationErrorResponse:
+      properties:
+        attribute:
+          anyOf:
+          - $ref: '#/components/schemas/RuleDuplicationAttributeResponse'
+          - type: 'null'
+          description: The attribute related to the error, if applicable
+        attributes:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/RuleDuplicationAttributeResponse'
+            type: array
+          - type: 'null'
+          description: The list of attributes related to the error, if applicable
+          title: Attributes
+        error_code:
+          description: The error code identifying the type of duplication error
+          enum:
+          - rule_duplication.self_duplication
+          - rule_duplication.source_rule.not_found
+          - rule_duplication.validity_period
+          - rule_duplication.referenced_attributes.not_found
+          - rule_duplication.target_attribute.duplicate_new_on_not_new
+          - rule_duplication.target_attribute.duplicate_not_new_on_new
+          - rule_duplication.target_attribute.not_found
+          - rule_duplication.target_attribute.default_rule.already_exists
+          - rule_duplication.target_attribute.default_rule.already_duplicated
+          - rule_duplication.unknown_error
+          - catalogue.not_found
+          title: Error Code
+          type: string
+        message:
+          description: A human-readable message describing the error
           title: Message
           type: string
-        type:
-          title: Error Type
-          type: string
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-      type: object
-    UpsertProductsResponse:
-      items:
-        $ref: '#/components/schemas/UpsertProductsResponseItem'
-      title: UpsertProductsResponse
-      type: array
-    UpdateProductsRequestItem:
-      additionalProperties:
-        anyOf:
-        - type: integer
-        - type: number
-        - type: string
-        - type: boolean
-        - type: 'null'
-      title: UpdateProductsRequestItem
+      - error_code
+      - message
+      title: RuleDuplicationErrorResponse
       type: object
     ListCataloguesResponseItem-Output:
       properties:
@@ -7622,19 +7873,10 @@ components:
       - channels_count
       title: ListCataloguesResponseItem
       type: object
-    ListProductsResponseItem:
-      properties:
-        attributes:
-          additionalProperties: true
-          title: Attributes
-          type: object
-        product_id_value:
-          title: Product Id Value
-          type: string
-      required:
-      - product_id_value
-      - attributes
-      title: ListProductsResponseItem
+    UpdateProductsRequest:
+      additionalProperties:
+        $ref: '#/components/schemas/UpdateProductsRequestItem'
+      title: UpdateProductsRequest
       type: object
     RuleDuplicationAttributeResponse:
       properties:
@@ -7662,250 +7904,8 @@ components:
       - source
       title: RuleDuplicationAttributeResponse
       type: object
-    ListAttributesResponse:
-      $ref: '#/components/schemas/PaginatedResultWithNext_str_'
-      title: ListAttributesResponse
-    UpdateProductsResponse:
-      additionalProperties:
-        $ref: '#/components/schemas/UpdateProductsResponseItem'
-      title: UpdateProductsResponse
-      type: object
-    UpsertProductsRequest:
-      items:
-        additionalProperties:
-          anyOf:
-          - type: integer
-          - type: number
-          - type: string
-          - type: boolean
-          - type: 'null'
-        type: object
-      title: UpsertProductsRequest
-      type: array
-    ListCataloguesResponseItem-Input:
-      properties:
-        additional_sources:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Additional Sources
-        catalogue_id:
-          title: Catalogue Id
-          type: integer
-        channels_count:
-          title: Channels Count
-          type: integer
-        name:
-          title: Name
-          type: string
-        product_id_key:
-          title: Product Id Key
-          type: string
-        role:
-          title: Role
-          type: string
-        status:
-          title: Status
-          type: string
-        used_by:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Used By
-      required:
-      - catalogue_id
-      - name
-      - status
-      - product_id_key
-      - role
-      - additional_sources
-      - used_by
-      - channels_count
-      title: ListCataloguesResponseItem
-      type: object
-    PaginatedResultWithNext_str_:
-      properties:
-        data:
-          items:
-            type: string
-          title: Data
-          type: array
-        limit:
-          title: Limit
-          type: integer
-        next:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Next
-        page:
-          title: Page
-          type: integer
-        total:
-          title: Total
-          type: integer
-      required:
-      - data
-      - total
-      - page
-      - limit
-      - next
-      title: PaginatedResultWithNext[str]
-      type: object
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          title: Detail
-          type: array
-      title: HTTPValidationError
-      type: object
-    RuleDuplicationOperationEntryResponse:
-      properties:
-        errors:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/RuleDuplicationErrorResponse'
-            type: array
-          - type: 'null'
-          title: Errors
-        new_rule_id:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: New Rule Id
-        source_catalogue_id:
-          title: Source Catalogue Id
-          type: integer
-        source_rule_id:
-          title: Source Rule Id
-          type: integer
-        success:
-          title: Success
-          type: boolean
-        target_catalogue_id:
-          title: Target Catalogue Id
-          type: integer
-        warnings:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/RuleDuplicationErrorResponse'
-            type: array
-          - type: 'null'
-          title: Warnings
-      required:
-      - source_rule_id
-      - source_catalogue_id
-      - target_catalogue_id
-      - success
-      title: RuleDuplicationOperationEntryResponse
-      type: object
-    UpdateProductRequest:
-      additionalProperties:
-        anyOf:
-        - type: integer
-        - type: number
-        - type: string
-        - type: boolean
-        - type: 'null'
-      title: UpdateProductRequest
-      type: object
-    PaginatedResultWithNext_ListProductsResponseItem_:
-      properties:
-        data:
-          items:
-            $ref: '#/components/schemas/ListProductsResponseItem'
-          title: Data
-          type: array
-        limit:
-          title: Limit
-          type: integer
-        next:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Next
-        page:
-          title: Page
-          type: integer
-        total:
-          title: Total
-          type: integer
-      required:
-      - data
-      - total
-      - page
-      - limit
-      - next
-      title: PaginatedResultWithNext[ListProductsResponseItem]
-      type: object
-    ListCataloguesResponse:
-      $ref: '#/components/schemas/PaginatedResultWithNext_ListCataloguesResponseItem_-Output'
-      title: ListCataloguesResponse
-    UpsertProductsResponseItem:
-      properties:
-        errors:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Errors
-        product_id_value:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Product Id Value
-        status:
-          title: Status
-          type: string
-      required:
-      - product_id_value
-      - status
-      - errors
-      title: UpsertProductsResponseItem
-      type: object
-    UpdateProductsRequest:
-      additionalProperties:
-        $ref: '#/components/schemas/UpdateProductsRequestItem'
-      title: UpdateProductsRequest
-      type: object
-    DeleteProductResponse:
-      description: Response model for single product deletion.
-      properties:
-        product_id_value:
-          description: The ID of the deleted product
-          title: Product Id Value
-          type: string
-        status:
-          description: The deletion status
-          title: Status
-          type: string
-      required:
-      - product_id_value
-      - status
-      title: DeleteProductResponse
-      type: object
-  responses:
-    TooManyRequests:
-      content:
-        application/json:
-          example:
-            error:
-              code: 429
-              message: 'Request limitation: 500 reached on /v3.0/orders'
-      description: The middleware rate-limit bucket is exhausted
-      headers:
-        Retry-After:
-          description: Seconds until the current fixed window expires
-          schema:
-            minimum: 0
-            type: integer
+    UpdateProductResponse:
+      title: UpdateProductResponse
   securitySchemes:
     bearerAuth:
       scheme: bearer
