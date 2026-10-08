@@ -47,3 +47,27 @@ plans:
   - Premium support and a dedicated CSM with high-touch service and quarterly reviews
   - Priority setup and tailored training services
   modules: best per-unit rates; advanced add-ons included
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models: []
+  units: []
+  plans:
+  - name: Essential
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
+  - name: Pro
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
+  - name: Scale
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
