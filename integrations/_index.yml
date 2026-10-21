@@ -118,3 +118,16 @@
   relationship: ipaas-bridge
   status: pending-generation
   arazzo: null
+- slug: lengow-bigcommerce-own
+  label: BigCommerce (own)
+  partner: bigcommerce
+  partner_name: BigCommerce (own)
+  category: Sales Channels, Multichannel Listings
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://www.bigcommerce.com/apps/lengow/
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
