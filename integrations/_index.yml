@@ -131,3 +131,15 @@
   relationship: platform-app
   status: not-a-workflow
   arazzo: null
+- slug: lengow-amazon-selling-partner-appstore
+  label: Amazon Selling Partner Appstore
+  partner: amazon-seller-central
+  partner_name: Amazon Selling Partner Appstore
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://sellercentral.amazon.com/selling-partner-appstore/dp/amzn1.sp.solution.4ceadcfa-ec9c-4261-8aff-951133b1b566
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null

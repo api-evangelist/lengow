@@ -9,6 +9,9 @@ checked:
 - https://zapier.com/api/v4/apps/
 - https://zapier.com/apps/lengow/integrations
 - bigcommerce/integrations/bigcommerce-integration-edges.yml
+- https://advertising.amazon.com/partners/directory
+- https://sellercentral.amazon.com/gspn
+- https://sellercentral.amazon.com/selling-partner-appstore
 summary: null
 marketplace_apps:
 - marketplace: zapier
@@ -151,4 +154,19 @@ edges:
   detected: '2026-10-20'
   detected_by: mirror-platform-listings.py
   category: Sales Channels, Multichannel Listings
+- partner_name: Amazon Selling Partner Appstore
+  partner: amazon-seller-central
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://sellercentral.amazon.com/selling-partner-appstore/dp/amzn1.sp.solution.4ceadcfa-ec9c-4261-8aff-951133b1b566
+  mirror_of: amazon-seller-central/integrations/amazon-seller-central-integration-edges.yml
+  apps:
+  - 'Lengow: Feed management & pricing'
+  detected: '2026-10-21'
+  detected_by: sweep-amazon-sp-api-appstore.py
 templates: []
