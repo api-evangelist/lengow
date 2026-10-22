@@ -12,6 +12,7 @@ checked:
 - https://advertising.amazon.com/partners/directory
 - https://sellercentral.amazon.com/gspn
 - https://sellercentral.amazon.com/selling-partner-appstore
+- adobe-commerce/integrations/adobe-commerce-integration-edges.yml
 summary: null
 marketplace_apps:
 - marketplace: zapier
@@ -137,6 +138,21 @@ edges:
   direction: third-party
   category: eCommerce
   partner_url: https://magento.com/
+- partner_name: Amazon Selling Partner Appstore
+  partner: amazon-seller-central
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://sellercentral.amazon.com/selling-partner-appstore/dp/amzn1.sp.solution.4ceadcfa-ec9c-4261-8aff-951133b1b566
+  mirror_of: amazon-seller-central/integrations/amazon-seller-central-integration-edges.yml
+  apps:
+  - 'Lengow: Feed management & pricing'
+  detected: '2026-10-21'
+  detected_by: sweep-amazon-sp-api-appstore.py
 - partner_name: BigCommerce (own)
   partner: bigcommerce
   partner_match: mirror
@@ -154,8 +170,8 @@ edges:
   detected: '2026-10-20'
   detected_by: mirror-platform-listings.py
   category: Sales Channels, Multichannel Listings
-- partner_name: Amazon Selling Partner Appstore
-  partner: amazon-seller-central
+- partner_name: Adobe Commerce (own)
+  partner: adobe-commerce
   partner_match: mirror
   mirror_match: domain
   type: marketplace
@@ -163,10 +179,12 @@ edges:
   direction: third-party
   channel: partner-built
   marketplace: own
-  evidence: https://sellercentral.amazon.com/selling-partner-appstore/dp/amzn1.sp.solution.4ceadcfa-ec9c-4261-8aff-951133b1b566
-  mirror_of: amazon-seller-central/integrations/amazon-seller-central-integration-edges.yml
+  evidence: https://commercemarketplace.adobe.com/lengow-module-connector.html
+  mirror_of: adobe-commerce/integrations/adobe-commerce-integration-edges.yml
   apps:
-  - 'Lengow: Feed management & pricing'
-  detected: '2026-10-21'
-  detected_by: sweep-amazon-sp-api-appstore.py
+  - Lengow Feed Management
+  listing_count: 1
+  detected: '2026-10-22'
+  detected_by: mirror-platform-listings.py
+  category: Adobe Commerce Marketplace extension
 templates: []
